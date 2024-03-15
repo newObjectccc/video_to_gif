@@ -1,11 +1,21 @@
 import { defineConfig } from "@rsbuild/core";
 import { pluginTypeCheck } from "@rsbuild/plugin-type-check";
 import { pluginReact } from "@rsbuild/plugin-react";
+import { mergeRsbuildConfig } from "@rsbuild/core";
 import { pluginImageCompress } from "@rsbuild/plugin-image-compress";
+import baseOptions from "./rsbuild.base.config";
 import { pluginCheckSyntax } from "@rsbuild/plugin-check-syntax";
 
-export default defineConfig({
+const prodOptions = defineConfig({
   plugins: [
+    /**
+     * [pluginReact description]
+     *
+     * React 插件提供了对 React 的支持，插件内部集成了 JSX 编译、React Refresh 等功能。
+     * 默认情况下，Rsbuild 使用 React 17 引入的新版本 JSX runtime。
+     *
+     * 更多内容请参考官方文档 https://rsbuild.dev/zh/plugins/list/plugin-react
+     */
     pluginReact(),
     /**
      * [pluginImageCompress description]
@@ -33,9 +43,15 @@ export default defineConfig({
      * 目前语法检测是基于 AST parser 来实现的，每次检测时，只能找出文件中的第一个不兼容语法。
      * 如果一个文件中存在多个不兼容语法，你需要修复已发现的语法，并重新执行检测。
      * 如果日志中没有显示对应的源码位置，可以尝试将 output.disableMinimize 设置为 true 后再重新构建。
+     * 一般来说使用默认设置就好，不需要额外配置。
+     * 当前项目 package.json 中的 browserslist 配置会被用于检测，如果你需要更改检测的目标浏览器，可以通过 targets 字段进行配置。
      *
+     * 更多内容请参考官方文档 https://rsbuild.dev/zh/plugins/list/plugin-check-syntax
      */
-    pluginCheckSyntax(),
+    pluginCheckSyntax({
+      // targets: ["chrome >= 58", "firefox >= 57", "safari >= 10", "edge >= 16", "ie >= 11"],
+      // exclude: /node_modules\/**/,
+    }),
     /**
      * [pluginTypeCheck description]
      *
@@ -52,3 +68,5 @@ export default defineConfig({
     }),
   ],
 });
+
+export default mergeRsbuildConfig(prodOptions, baseOptions);
