@@ -1,6 +1,6 @@
 # NGWP
 
-基于rsbuild的下一代WEB项目模板，建议直接参考[rsbuild官方文档](https://www.rspack.dev/zh/)
+基于rust工具链的下一代WEB项目模板，建议直接参考[rsbuild官方文档](https://www.rspack.dev/zh/)
 
 ## 环境
 
