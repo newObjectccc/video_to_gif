@@ -1,6 +1,6 @@
 import { defineConfig } from "@rsbuild/core";
-import { pluginTypeCheck } from "@rsbuild/plugin-type-check";
 import { pluginReact } from "@rsbuild/plugin-react";
+import { pluginTypeCheck } from "@rsbuild/plugin-type-check";
 import path from "node:path";
 
 export default defineConfig({
@@ -13,6 +13,7 @@ export default defineConfig({
       "@common": "./src/common",
       "@types": "./src/types",
     },
+    // 装饰器语法版本
     decorators: {
       version: "2022-03", // 'legacy' | '2022-03'
     },

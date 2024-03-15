@@ -1,12 +1,17 @@
-import { defineConfig } from "@rsbuild/core";
-import { pluginTypeCheck } from "@rsbuild/plugin-type-check";
-import { pluginReact } from "@rsbuild/plugin-react";
-import { mergeRsbuildConfig } from "@rsbuild/core";
-import { pluginImageCompress } from "@rsbuild/plugin-image-compress";
-import baseOptions from "./rsbuild.base.config";
+import { defineConfig, mergeRsbuildConfig } from "@rsbuild/core";
 import { pluginCheckSyntax } from "@rsbuild/plugin-check-syntax";
+import { pluginImageCompress } from "@rsbuild/plugin-image-compress";
+import { pluginReact } from "@rsbuild/plugin-react";
+import { pluginTypeCheck } from "@rsbuild/plugin-type-check";
+import baseOptions from "./rsbuild.base.config";
 
 const prodOptions = defineConfig({
+  output: {
+    dataUriLimit: {
+      svg: 8 * 1024, // 8kb
+      image: 8 * 1024, // 8kb
+    },
+  },
   plugins: [
     /**
      * [pluginReact description]
