@@ -11,6 +11,25 @@ const prodOptions = defineConfig({
       svg: 8 * 1024, // 8kb
       image: 8 * 1024, // 8kb
     },
+    // filenameHash: "contenthash",
+    filename: {
+      js: "js/[name].[contenthash:8].js",
+      css: "css/[name].[contenthash:8].css",
+      media: "media/[name].[contenthash:8].[ext]",
+      font: "font/[name].[contenthash:8].[ext]",
+      image: "image/[name].[contenthash:8].[ext]",
+      svg: "svg/[name].[contenthash:8].[ext]",
+    },
+    minify: {
+      js: true,
+      jsOptions: {
+        compress: {
+          drop_console: true,
+        },
+      },
+      css: true,
+      html: true,
+    },
   },
   plugins: [
     /**
