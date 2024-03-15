@@ -1,4 +1,6 @@
-# Rsbuild Project
+# NGWP
+
+next generation web project.
 
 ## Setup
 
