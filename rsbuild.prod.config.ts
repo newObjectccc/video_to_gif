@@ -75,6 +75,7 @@ const prodOptions = defineConfig({
     pluginCheckSyntax({
       // targets: ["chrome >= 58", "firefox >= 57", "safari >= 10", "edge >= 16", "ie >= 11"],
       // exclude: /node_modules\/**/,
+      // ecmaVersion: 2022, //指定要使用的 ECMAScript 版本，默认会基于target自动分析。
     }),
     /**
      * [pluginTypeCheck description]

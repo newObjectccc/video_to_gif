@@ -12,6 +12,10 @@ export default defineConfig({
       "@pages": "./src/pages",
       "@common": "./src/common",
       "@types": "./src/types",
+      "@services": "./src/services",
+      "@routes": "./src/routes",
+      "@api": "./src/api",
+      "@assets": "./src/assets",
     },
     // 装饰器语法版本
     decorators: {
@@ -22,6 +26,9 @@ export default defineConfig({
       path.resolve(__dirname, "node_modules"),
       path.resolve(__dirname, "dist"),
     ],
+  },
+  html: {
+    template: "./public/index.html",
   },
   plugins: [
     /**
