@@ -6,17 +6,6 @@ import path from "node:path";
 export default defineConfig({
   source: {
     aliasStrategy: "prefer-tsconfig", // 'prefer-tsconfig' | 'prefer-alias'
-    alias: {
-      "@src": "./src",
-      "@components": "./src/components",
-      "@pages": "./src/pages",
-      "@common": "./src/common",
-      "@types": "./src/types",
-      "@services": "./src/services",
-      "@routes": "./src/routes",
-      "@api": "./src/api",
-      "@assets": "./src/assets",
-    },
     // 装饰器语法版本
     decorators: {
       version: "2022-03", // 'legacy' | '2022-03'
