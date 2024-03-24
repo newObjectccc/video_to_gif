@@ -1,14 +1,12 @@
-import PageA from "@pages/pageA";
-import PageB from "@pages/pageB";
+import Main from "@src/pages/Main";
 import { Navigate } from "react-router-dom";
 
 export const routes = [
   {
     path: "/",
     children: [
-      { index: true, element: <Navigate to="pageA" /> },
-      { path: "pageA", element: <PageA /> },
-      { path: "pageB", element: <PageB /> },
+      { index: true, element: <Navigate to="main" /> },
+      { path: "main", element: <Main /> },
     ],
   },
 ];
