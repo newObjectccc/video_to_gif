@@ -3,14 +3,12 @@
 基于rust工具链的下一代WEB项目模板，建议直接参考[rsbuild官方文档](https://www.rspack.dev/zh/)
 
 > [!IMPORTANT]
-> 现在这只是一个demo！。
+> 最好重构一下Main.tsx的逻辑，通过 raf + pipeline 的工作流设计会更好～
 
 ## 功能
 
-- ✨ 轻量的工程化配置（零业务封装）
-- 💥 开箱即用的React + Tailwindcss + Typescript配置
-- 💫 基于Rsbuild的超爽开发及构建体验
-- 🧨 基于Oxlint的超快代码规范检测
-- 💖 基于git-cliff的自定义changlog版本管理
-
-
+- ✨ video转gif，支持添加微信表情
+- 💥 支持导出gif宽高调节
+- 💫 支持自定义帧采样率
+- 🧨 支持自定义帧延迟
+- 💖 完全免费
