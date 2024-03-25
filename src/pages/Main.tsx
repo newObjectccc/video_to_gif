@@ -96,28 +96,28 @@ const Main: React.FC<MainProps> = (props) => {
       <Separator className="my-6"></Separator>
       <div className="flex flex-row flex-nowrap gap-4">
         <video
-          className="border-2 w-[400px] h-[200px]"
+          className="border-2 w-[480px] h-[240px]"
           ref={videoRef}
-          width="400"
-          height="200"
+          width="480"
+          height="240"
           controls
         >
           <source src={state.videoStat.url} type={state.videoStat.type} />
         </video>
         <canvas
-          className="border-2 w-[400px] h-[200px]"
+          className="border-2 w-[480px] h-[240px]"
           ref={canvasRef}
-          width="400"
-          height="200"
+          width="480"
+          height="240"
         ></canvas>
         {state.gifStat.url ? (
           <img
-            className="w-[400px] h-[200px]"
+            className="w-[480px] h-[240px]"
             src={state.gifStat.url}
             alt="loading..."
           />
         ) : (
-          <div className="w-[400px] h-[200px] flex justify-center items-center border-2 border-dashed">
+          <div className="w-[480px] h-[240px] flex justify-center items-center border-2 border-dashed">
             视频暂停或完结后自动抓取
           </div>
         )}
