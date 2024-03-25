@@ -1,4 +1,4 @@
-import { Scan, Star } from "lucide-react";
+import { Frame, PencilRuler, Ruler, Scan, Star } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -34,7 +34,7 @@ type CardProps = React.ComponentProps<typeof Card>;
 export function InfoCard({ className, ...props }: CardProps) {
   const [state, dispatch] = React.useContext(TransformStateContext);
   return (
-    <Card className={cn("w-[380px]", className)} {...props}>
+    <Card className={cn("w-[420px]", className)} {...props}>
       <CardHeader>
         <CardTitle className="mb-3">定制面板</CardTitle>
         <CardDescription>在这里可以定制你的gif，采样率，等等。</CardDescription>
@@ -55,7 +55,73 @@ export function InfoCard({ className, ...props }: CardProps) {
               onValueChange={(value) =>
                 dispatch({
                   type: "framesOptions",
-                  payload: { framesPicker: value },
+                  payload: { framesPicker: value[0] },
+                } as any)
+              }
+              className={cn("w-[60%]", "ml-2")}
+            />
+          </div>
+        </div>
+        <div className=" flex items-center space-x-4 rounded-md border p-4">
+          <Frame />
+          <div className="">
+            <p className="text-sm font-medium leading-none">帧延迟(毫秒)</p>
+          </div>
+          <div className="flex items-center flex-1 justify-end">
+            {state.framesOptions.framesDelay}
+            <Slider
+              value={[state.framesOptions.framesDelay!]}
+              max={1000}
+              min={100}
+              step={100}
+              onValueChange={(value) =>
+                dispatch({
+                  type: "framesOptions",
+                  payload: { framesDelay: value[0] },
+                } as any)
+              }
+              className={cn("w-[60%]", "ml-2")}
+            />
+          </div>
+        </div>
+        <div className=" flex items-center space-x-4 rounded-md border p-4">
+          <Ruler />
+          <div className="">
+            <p className="text-sm font-medium leading-none">gif宽度</p>
+          </div>
+          <div className="flex items-center flex-1 justify-end">
+            {state.canvasRect.width}px
+            <Slider
+              value={[state.canvasRect.width!]}
+              max={2560}
+              min={640}
+              step={10}
+              onValueChange={(value) =>
+                dispatch({
+                  type: "canvasRect",
+                  payload: { width: value[0] },
+                } as any)
+              }
+              className={cn("w-[60%]", "ml-2")}
+            />
+          </div>
+        </div>
+        <div className=" flex items-center space-x-4 rounded-md border p-4">
+          <PencilRuler />
+          <div className="">
+            <p className="text-sm font-medium leading-none">gif高度</p>
+          </div>
+          <div className="flex items-center flex-1 justify-end">
+            {state.canvasRect.height}px
+            <Slider
+              value={[state.canvasRect.height!]}
+              max={1440}
+              min={320}
+              step={10}
+              onValueChange={(value) =>
+                dispatch({
+                  type: "canvasRect",
+                  payload: { height: value[0] },
                 } as any)
               }
               className={cn("w-[60%]", "ml-2")}
