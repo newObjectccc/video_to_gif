@@ -41,20 +41,20 @@ const Main: React.FC<MainProps> = (props) => {
 
     if (!video || !canvas || !ctx) return;
 
-    ctx!.clearRect(0, 0, canvas.width, canvas.height);
-    ctx!.fillStyle = theme === "dark" ? "#F8FAFC" : "#020817";
-    ctx!.font = "16px Arial";
-    ctx!.textBaseline = "middle";
-    ctx!.textAlign = "center";
-    ctx!.fillText("预览区域", canvas.width / 2, canvas.height / 2);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = theme === "dark" ? "#F8FAFC" : "#020817";
+    ctx.font = "16px Arial";
+    ctx.textBaseline = "middle";
+    ctx.textAlign = "center";
+    ctx.fillText("预览区域", canvas.width / 2, canvas.height / 2);
 
-    if (state.videoStat.url) video?.load();
+    if (state.videoStat.url && state.videoStat.url !== video.src) video?.load();
 
     const extractFrame = () => {
       let gif = GIFEncoder();
       const loop = () => {
-        if (video!.paused || video!.ended) {
-          if (video!.paused) isReplay.current = true;
+        if (video.paused || video.ended) {
+          if (video.paused) isReplay.current = true;
           gif.finish();
           const blob = new Blob([gif.bytes()], { type: "image/gif" });
           const url = URL.createObjectURL(blob);
@@ -65,27 +65,34 @@ const Main: React.FC<MainProps> = (props) => {
           dispatch({ type: "gifStat", payload: { url: "" } } as any);
           isReplay.current = false;
         }
-        ctx?.drawImage(video!, 0, 0, canvas!.width, canvas!.height);
-        const { data, width, height } = ctx!.getImageData(
+        ctx.drawImage(
+          video,
           0,
           0,
-          canvas!.width,
-          canvas!.height
+          state.canvasRect.width!,
+          state.canvasRect.height!
+        );
+        const { data, width, height } = ctx.getImageData(
+          0,
+          0,
+          state.canvasRect.width!,
+          state.canvasRect.height!
         );
         const palette = quantize(data, 256);
         const index = applyPalette(data, palette);
-        gif.writeFrame(index, width, height, { palette });
+        gif.writeFrame(index, width, height, {
+          palette,
+          delay: state.framesOptions.framesDelay,
+        });
         setTimeout(loop, 1000 / state.framesOptions.framesPicker!);
       };
       loop();
     };
-
     video!.addEventListener("play", extractFrame);
-
     return () => {
       video!.removeEventListener("play", extractFrame);
     };
-  }, [state.videoStat, theme]);
+  }, [state.videoStat, state.framesOptions, state.canvasRect, theme]);
 
   return (
     <div className="p-4">
@@ -96,28 +103,27 @@ const Main: React.FC<MainProps> = (props) => {
       <Separator className="my-6"></Separator>
       <div className="flex flex-row flex-nowrap gap-4">
         <video
-          className="border-2 w-[480px] h-[240px]"
+          className="border-2 w-[420px] h-[210px]"
           ref={videoRef}
           width="480"
           height="240"
           controls
-        >
-          <source src={state.videoStat.url} type={state.videoStat.type} />
-        </video>
+          src={state.videoStat.url}
+        ></video>
         <canvas
-          className="border-2 w-[480px] h-[240px]"
+          className="border-2 w-[420px] h-[210px]"
           ref={canvasRef}
-          width="480"
-          height="240"
+          width={state.canvasRect.width}
+          height={state.canvasRect.height}
         ></canvas>
         {state.gifStat.url ? (
           <img
-            className="w-[480px] h-[240px]"
+            className="w-[420px] h-[210px]"
             src={state.gifStat.url}
             alt="loading..."
           />
         ) : (
-          <div className="w-[480px] h-[240px] flex justify-center items-center border-2 border-dashed">
+          <div className="w-[420px] h-[210px] flex justify-center items-center border-2 border-dashed">
             视频暂停或完结后自动抓取
           </div>
         )}
