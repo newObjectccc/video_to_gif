@@ -1,8 +1,6 @@
 import { defineConfig, mergeRsbuildConfig } from "@rsbuild/core";
-import { pluginCheckSyntax } from "@rsbuild/plugin-check-syntax";
 import { pluginImageCompress } from "@rsbuild/plugin-image-compress";
 import { pluginReact } from "@rsbuild/plugin-react";
-import { pluginTypeCheck } from "@rsbuild/plugin-type-check";
 import baseOptions from "./rsbuild.base.config";
 
 const prodOptions = defineConfig({
@@ -72,11 +70,11 @@ const prodOptions = defineConfig({
      *
      * 更多内容请参考官方文档 https://rsbuild.dev/zh/plugins/list/plugin-check-syntax
      */
-    pluginCheckSyntax({
-      // targets: ["chrome >= 58", "firefox >= 57", "safari >= 10", "edge >= 16", "ie >= 11"],
-      // exclude: /node_modules\/**/,
-      // ecmaVersion: 2022, //指定要使用的 ECMAScript 版本，默认会基于target自动分析。
-    }),
+    // pluginCheckSyntax({
+    //   targets: ["chrome >= 58", "firefox >= 57", "safari >= 10", "edge >= 16", "ie >= 11"],
+    //   exclude: /node_modules\/**/,
+    //   ecmaVersion: 2022, //指定要使用的 ECMAScript 版本，默认会基于target自动分析。
+    // }),
     /**
      * [pluginTypeCheck description]
      *
@@ -87,10 +85,10 @@ const prodOptions = defineConfig({
      *
      * 更多内容请参考官方文档 https://rsbuild.dev/zh/plugins/list/plugin-type-check
      */
-    pluginTypeCheck({
-      // enable: true, //是否开启 TypeScript 类型检查，默认开启。
-      // forkTsCheckerOptions: {}, //fork-ts-checker-webpack-plugin 配置项 https://github.com/TypeStrong/fork-ts-checker-webpack-plugin#readme。
-    }),
+    // pluginTypeCheck({
+    //   enable: true, //是否开启 TypeScript 类型检查，默认开启。
+    //   forkTsCheckerOptions: {}, //fork-ts-checker-webpack-plugin 配置项 https://github.com/TypeStrong/fork-ts-checker-webpack-plugin#readme。
+    // }),
   ],
 });
 
