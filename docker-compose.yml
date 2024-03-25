@@ -1,0 +1,9 @@
+version: "3"
+services:
+  vtog:
+    image: caddy:2-alpine
+    volumes:
+      - ./dist:/usr/share/caddy
+      - ./Caddyfile:/etc/caddy/Caddyfile
+    ports:
+      - 8080:80
