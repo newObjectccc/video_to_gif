@@ -1,5 +1,4 @@
-import { defineConfig } from "@rsbuild/core";
-import { mergeRsbuildConfig } from "@rsbuild/core";
+import { defineConfig, mergeRsbuildConfig } from "@rsbuild/core";
 import baseOptions from "./rsbuild.base.config";
 
 const devOptions = defineConfig({

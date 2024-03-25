@@ -1,7 +1,6 @@
 import { defineConfig } from "@rsbuild/core";
 import { pluginReact } from "@rsbuild/plugin-react";
 import { pluginTypeCheck } from "@rsbuild/plugin-type-check";
-import path from "node:path";
 
 export default defineConfig({
   source: {
@@ -10,11 +9,6 @@ export default defineConfig({
     decorators: {
       version: "2022-03", // 'legacy' | '2022-03'
     },
-    include: ["src"],
-    exclude: [
-      path.resolve(__dirname, "node_modules"),
-      path.resolve(__dirname, "dist"),
-    ],
   },
   html: {
     template: "./public/index.html",
