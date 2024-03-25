@@ -13,16 +13,9 @@
     "esModuleInterop": true,
     "paths": {
       "@src/*": ["./src/*"],
-      "@components/*": ["./src/components/*"],
-      "@pages/*": ["./src/pages/*"],
-      "@lib/*": ["./src/lib/*"],
-      "@types/*": ["./src/types/*"],
-      "@services/*": ["./src/services/*"],
-      "@routes/*": ["./src/routes/*"],
-      "@api/*": ["./src/api/*"],
-      "@assets/*": ["./src/assets/*"]
+      "@/*": ["./@/*"]
     }
   },
-  "include": ["src"],
+  "include": ["src", "@"],
   "exclude": ["node_modules", "dist", "src/assets/**/*"]
 }
