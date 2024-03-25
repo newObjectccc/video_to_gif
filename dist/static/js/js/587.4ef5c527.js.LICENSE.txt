@@ -1,0 +1,182 @@
+/*! ./defaultAttributes.js */
+
+/**
+ * @license lucide-react v0.363.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+
+/**
+ * @license lucide-react v0.363.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+
+/*! @radix-ui/react-context */
+
+/*! @radix-ui/react-slot */
+
+/*! react */
+
+/*! @radix-ui/react-context */
+
+/*! ./icons/star.js */
+
+/*! react */
+
+/*! @radix-ui/react-use-callback-ref */
+
+/*! @radix-ui/react-use-controllable-state */
+
+/*! @radix-ui/primitive */
+
+/*! @radix-ui/react-compose-refs */
+
+/**
+ * @license lucide-react v0.363.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+
+/*! react */
+
+/*! react */
+
+/*! @radix-ui/react-use-layout-effect */
+
+/*! react */
+
+/*! @radix-ui/react-context */
+
+/*! react */
+
+/*! ./icons/upload.js */
+
+/*! @radix-ui/react-compose-refs */
+
+/*! @babel/runtime/helpers/esm/extends */
+
+/*! ./icons/scan.js */
+
+/*! @radix-ui/react-use-controllable-state */
+
+/*! @radix-ui/primitive */
+
+/*! @babel/runtime/helpers/esm/extends */
+
+/*! @radix-ui/react-slot */
+
+/**
+ * @license lucide-react v0.363.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+
+/*! @babel/runtime/helpers/esm/extends */
+
+/*! ../createLucideIcon.js */
+
+/*! react */
+
+/*! @radix-ui/react-direction */
+
+/*! @radix-ui/react-compose-refs */
+
+/*! @radix-ui/react-primitive */
+
+/*! react-dom */
+
+/*! @radix-ui/react-use-previous */
+
+/*! @radix-ui/react-compose-refs */
+
+/*! @radix-ui/number */
+
+/**
+ * @license lucide-react v0.363.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+
+/*! @radix-ui/react-use-size */
+
+/*! react */
+
+/*! @radix-ui/react-primitive */
+
+/*! react */
+
+/**
+ * @license lucide-react v0.363.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+
+/*! @radix-ui/react-use-previous */
+
+/*! ../createLucideIcon.js */
+
+/*! @radix-ui/react-use-size */
+
+/**
+ * @license lucide-react v0.363.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+
+/*! react */
+
+/*! ./icons/palette.js */
+
+/*! clsx */
+
+/*! @babel/runtime/helpers/esm/extends */
+
+/*! ./icons/download.js */
+
+/*! ./shared/src/utils.js */
+
+/*! react */
+
+/*! @babel/runtime/helpers/esm/extends */
+
+/*! ../createLucideIcon.js */
+
+/**
+ * @license lucide-react v0.363.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+
+/*! react */
+
+/*! @radix-ui/react-collection */
+
+/*! ../createLucideIcon.js */
+
+/*! react */
+
+/*! react */
+
+/*! ../createLucideIcon.js */
+
+/*! react */
+
+/*! @radix-ui/react-primitive */
+
+/**
+ * @license lucide-react v0.363.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+
+/*! react */
