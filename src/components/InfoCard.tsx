@@ -43,7 +43,7 @@ export function InfoCard({ className, ...props }: CardProps) {
       <CardHeader>
         <CardTitle className="mb-3">定制面板</CardTitle>
         <CardDescription>
-          视频播放即开始采样，结束或暂停都停止采样并生成gif，采样率越大关键帧越多，关键帧多少和gif分辨率都直接影响预览gif的速度，只有预览之后才能导出gif
+          视频播放时同步采样，结束或暂停都会停止采样，请直接拉动进度条到你想要的开始点或直接从头开始
         </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">
@@ -53,7 +53,7 @@ export function InfoCard({ className, ...props }: CardProps) {
             <p className="text-sm font-medium leading-none">帧采样率</p>
           </div>
           <div className="flex items-center flex-1 justify-end">
-            {state.framesOptions.framesPicker}
+            {state.framesOptions.framesPicker}%
             <Slider
               value={[state.framesOptions.framesPicker!]}
               max={100}
