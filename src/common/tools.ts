@@ -65,7 +65,7 @@ export function fillNoticeTxtToCanvas(
     height = 0,
   } = options;
   if (!height || !width || !text) return;
-  const fontSize = width * 0.044;
+  const fontSize = width * 0.04;
   const coverFont = font || `${fontSize}px Arial`;
   ctx.clearRect(0, 0, width, height);
   ctx.fillStyle = fillStyle;
