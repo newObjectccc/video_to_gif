@@ -1,4 +1,6 @@
-# ![iconLg-48x48px](https://github.com/newObjectccc/video_to_gif/assets/42132586/00f0bff7-782c-40d2-9e8b-5b3395391779) - v2g
+# ![iconLg-48x48px](https://github.com/newObjectccc/video_to_gif/assets/42132586/00f0bff7-782c-40d2-9e8b-5b3395391779)
+
+v2g - video to gif
 
 将你的Video转换成Gif，且支持自定义
 
