@@ -20,12 +20,17 @@ const notifications = [
     description: "mp4,webm...",
   },
   {
+    title: "调试参数",
+    description:
+      "每秒采样率越高，越连贯，gif宽度高度越大越清晰，具体请参考素材",
+  },
+  {
     title: "播放并预览",
     description: "在预览区域预览gif的效果",
   },
   {
     title: "导出gif",
-    description: "清先确认效果，然后导出gif到本地",
+    description: "清先确认效果，然后点击导出按钮导出gif到本地",
   },
 ];
 
@@ -37,7 +42,9 @@ export function InfoCard({ className, ...props }: CardProps) {
     <Card className={cn("w-[420px]", className)} {...props}>
       <CardHeader>
         <CardTitle className="mb-3">定制面板</CardTitle>
-        <CardDescription>在这里可以定制你的gif，采样率，等等。</CardDescription>
+        <CardDescription>
+          在这里可以定制你的gif，采样率，等等，视频播放即开始采样，结束或暂停都停止采样并生成gif。
+        </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">
         <div className=" flex items-center space-x-4 rounded-md border p-4">
@@ -128,11 +135,11 @@ export function InfoCard({ className, ...props }: CardProps) {
             />
           </div>
         </div>
-        <div className="mt-12">
+        <div className="mt-6">
           {notifications.map((notification, index) => (
             <div
               key={index}
-              className="mb-4 grid grid-cols-[25px_1fr] items-start pb-4 last:mb-0 last:pb-0"
+              className="grid grid-cols-[25px_1fr] items-start pb-4 last:mb-0 last:pb-0"
             >
               <span className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" />
               <div className="space-y-1">
