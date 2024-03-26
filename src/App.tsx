@@ -1,5 +1,6 @@
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
+import { Toaster } from "@/components/ui/toaster";
 import { InfoCard } from "@src/components/InfoCard";
 import {
   TransformStateIntf,
@@ -50,6 +51,7 @@ const App = () => {
         <InfoCard className="rounded-lg m-4 flex flex-col flex-nowrap"></InfoCard>
         <div>{routesElem}</div>
       </div>
+      <Toaster />
     </TransformStateContext.Provider>
   );
 };
