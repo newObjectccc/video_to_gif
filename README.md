@@ -1,8 +1,9 @@
-# Video2Gif - v2g
+# ![iconLg-48x48px](https://github.com/newObjectccc/video_to_gif/assets/42132586/00f0bff7-782c-40d2-9e8b-5b3395391779) - v2g
 
-基于rust工具链的下一代WEB项目模板，建议直接参考[rsbuild官方文档](https://www.rspack.dev/zh/)
+将你的Video转换成Gif，且支持自定义
 
 > [!IMPORTANT]
+
 > 最好重构一下Main.tsx的逻辑，通过 raf + pipeline 的工作流设计会更好～
 
 ## 功能
