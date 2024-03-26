@@ -113,14 +113,14 @@ export const ImgMenu: React.FC<ImgMenuProps> = (props) => {
         <ContextMenuSeparator />
         <ContextMenuCheckboxItem
           checked={checkedState.checkOne}
-          onCheckedChange={(val) => onCheckedHandler(val, "checkOne")}
+          onCheckedChange={(val: boolean) => onCheckedHandler(val, "checkOne")}
         >
           Show Bookmarks Bar
           <ContextMenuShortcut>⌘⇧B</ContextMenuShortcut>
         </ContextMenuCheckboxItem>
         <ContextMenuCheckboxItem
           checked={checkedState.checkTwo}
-          onCheckedChange={(val) => onCheckedHandler(val, "checkTwo")}
+          onCheckedChange={(val: boolean) => onCheckedHandler(val, "checkTwo")}
         >
           Show Full URLs
         </ContextMenuCheckboxItem>
