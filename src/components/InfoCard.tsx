@@ -26,7 +26,7 @@ const notifications = [
   },
   {
     title: "播放并预览",
-    description: "在预览区域预览gif的效果",
+    description: "在预览区域预览gif的效果，预览之后才能导出",
   },
   {
     title: "导出gif",
@@ -43,7 +43,7 @@ export function InfoCard({ className, ...props }: CardProps) {
       <CardHeader>
         <CardTitle className="mb-3">定制面板</CardTitle>
         <CardDescription>
-          在这里可以定制你的gif，采样率，等等，视频播放即开始采样，结束或暂停都停止采样并生成gif。
+          视频播放即开始采样，结束或暂停都停止采样并生成gif，采样率越大关键帧越多，关键帧多少和gif分辨率都直接影响预览gif的速度，只有预览之后才能导出gif
         </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">
@@ -59,6 +59,9 @@ export function InfoCard({ className, ...props }: CardProps) {
               max={100}
               min={1}
               step={1}
+              trackCls={
+                state.framesOptions.framesPicker! > 30 ? "bg-red-500" : ""
+              }
               onValueChange={(value) =>
                 dispatch({
                   type: "framesOptions",
