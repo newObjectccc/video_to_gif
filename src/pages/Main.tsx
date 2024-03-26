@@ -13,6 +13,7 @@ import { ImgMenu } from "@src/components/ImgMenu";
 import PreviewGif from "@src/components/PreviewGif";
 import RenderFramesLine from "@src/components/RenderFramesLine";
 import Upload from "@src/components/Upload";
+import mediumZoom from "medium-zoom";
 import { useTheme } from "next-themes";
 import React, { MouseEventHandler, useEffect, useRef } from "react";
 
@@ -26,6 +27,7 @@ const Main: React.FC<MainProps> = () => {
   const [isRendering, setIsRendering] = React.useState<boolean>(false);
   const [totalFrames, setTotalFrames] = React.useState<number>(0);
   const [curImageIdx, setCurImageIdx] = React.useState<number>(0);
+  const zoomRef = useRef<any>(null);
   const { theme } = useTheme();
 
   const [state, dispatch] = React.useContext(TransformStateContext);
@@ -52,17 +54,21 @@ const Main: React.FC<MainProps> = () => {
   };
 
   const onImgRemove = () => {
-    if (curImageIdx === 0) return;
+    if (!cacheFrames.current.length) return;
     cacheFrames.current.splice(curImageIdx, 1);
-    onStackRenderHandler();
+    framesStackElemRef.current?.removeChild(
+      framesStackElemRef.current?.children[curImageIdx]
+    );
   };
 
-  const onImgEdit = () => {
-    console.log("🚀 ~ onImgEdit ~ curImageIdx:", curImageIdx);
-  };
+  const onImgEdit = () => {};
 
   const onImgPreview = () => {
-    console.log("🚀 ~ onImgPreview ~ curImageIdx:", curImageIdx);
+    const zoom = mediumZoom(
+      framesStackElemRef.current!.querySelectorAll("img")[curImageIdx],
+      { background: theme === "light" ? "#F8FAFC" : "#020817" }
+    );
+    zoom.open();
   };
 
   const onStackRenderHandler = () => {
@@ -97,6 +103,15 @@ const Main: React.FC<MainProps> = () => {
           if (idx + 1 === cacheFrames.current.length) {
             progressRef.current.style.visibility = "hidden";
             setTotalFrames(cacheFrames.current.length);
+            zoomRef.current = mediumZoom(
+              framesStackElem.querySelectorAll("img"),
+              {
+                background:
+                  theme === "light"
+                    ? "rgba(248, 250, 252, 0.85)"
+                    : "rgba(2, 8, 23, 0.85)",
+              }
+            );
           }
           if (idx === 0) progressRef.current.style.visibility = "visible";
         }
@@ -131,6 +146,7 @@ const Main: React.FC<MainProps> = () => {
     cacheFrames.current = [];
     setTotalFrames(0);
     setIsRendering(false);
+    framesStackElemRef.current!.innerHTML = "";
     dispatch({ type: "gifStat", payload: { url: "" } } as any);
   };
 
@@ -142,12 +158,18 @@ const Main: React.FC<MainProps> = () => {
     if (!ctx || !video) return;
     if (video.paused || video.ended) {
       fillNoticeTxtToCanvas(ctx, {
-        text: "预览区域",
+        text: "关键帧截取预览区域",
         width: state.canvasRect.width!,
         height: state.canvasRect.height!,
         fillStyle: theme === "dark" ? "#F8FAFC" : "#020817",
       });
     }
+    zoomRef.current?.update({
+      background:
+        theme === "light"
+          ? "rgba(248, 250, 252, 0.85)"
+          : "rgba(2, 8, 23, 0.85)",
+    });
   }, [theme]);
 
   useEffect(() => {
@@ -159,9 +181,17 @@ const Main: React.FC<MainProps> = () => {
 
     if (!video || !ctx) return;
 
-    if (video.played.length) video.load();
-
-    ctx.clearRect(0, 0, state.canvasRect.width!, state.canvasRect.height!);
+    if (video.played.length) {
+      video.load();
+      resetWorkspace(ctx);
+    } else {
+      fillNoticeTxtToCanvas(ctx, {
+        text: "关键帧截取预览区域",
+        width: state.canvasRect.width!,
+        height: state.canvasRect.height!,
+        fillStyle: theme === "dark" ? "#F8FAFC" : "#020817",
+      });
+    }
 
     const extractFrame = () => {
       resetWorkspace(ctx);
@@ -227,7 +257,7 @@ const Main: React.FC<MainProps> = () => {
             {isRendering ? (
               <Skeleton className="w-[380px] h-[170px] rounded-xl" />
             ) : (
-              "视频暂停或完结后自动抓取"
+              "点击预览按钮生成GIF动画~"
             )}
           </div>
         )}
