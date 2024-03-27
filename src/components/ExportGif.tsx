@@ -7,10 +7,11 @@ import React from "react";
 
 interface ExportGifProps {
   onExport: () => void;
+  disabled?: boolean;
 }
 
 const ExportGif: React.FC<ExportGifProps> = (props) => {
-  const { onExport } = props;
+  const { onExport, ...restProps } = props;
   const { toast } = useToast();
   const [state] = React.useContext(TransformStateContext);
 
@@ -27,7 +28,7 @@ const ExportGif: React.FC<ExportGifProps> = (props) => {
   };
 
   return (
-    <Button onClick={exportGif}>
+    <Button {...restProps} onClick={exportGif}>
       <Download className="mr-2 size-4" />
       导出GIF
     </Button>

@@ -3,11 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ToastAction } from "@/components/ui/toast";
 import { toast } from "@/components/ui/use-toast";
 import { TransformStateContext } from "@src/App";
-import {
-  fillNoticeTxtToCanvas,
-  generateGifByImgData,
-  getCurTargetElemIdx,
-} from "@src/common/tools";
+import { fillNoticeTxtToCanvas, getCurTargetElemIdx } from "@src/common/tools";
 import ExportGift from "@src/components/ExportGif";
 import { ImgMenu } from "@src/components/ImgMenu";
 import PreviewGif from "@src/components/PreviewGif";
@@ -89,7 +85,6 @@ const Main: React.FC<MainProps> = () => {
         description: "请检查左侧步骤是否有错误~",
         action: <ToastAction altText="去上传">Undo</ToastAction>,
       });
-    // render 瓶颈前都不需要优化，直接全量更新~
     cacheFrames.current.forEach((imageData, idx) => {
       setTimeout(() => {
         const { width, height } = imageData;
@@ -128,25 +123,37 @@ const Main: React.FC<MainProps> = () => {
   };
 
   const previewGif = () => {
+    if (!cacheFrames.current.length) {
+      toast({
+        title: "没有缓存帧",
+        description: "请检查左侧步骤是否有错误~",
+        action: <ToastAction altText="去上传">Undo</ToastAction>,
+      });
+      return;
+    }
     setIsRendering(true);
-    setTimeout(() => {
-      generateGifByImgData(
-        cacheFrames.current,
-        state.framesOptions.framesDelay!,
-        (p) => {
-          if (progressRef.current) {
-            progressRef.current.style.visibility = "visible";
-            progressRef.current.style.width = `${p}%`;
-            if (p === 100) {
-              progressRef.current.style.visibility = "hidden";
-            }
-          }
+    const gifWorker = new Worker(
+      new URL("../works/generateGif.ts", import.meta.url)
+    );
+    gifWorker.postMessage({
+      imgData: cacheFrames.current,
+      delay: state.framesOptions.framesDelay!,
+    });
+    gifWorker.onmessage = (e) => {
+      if (!progressRef.current) return;
+      const { type, url, process } = e.data;
+      if (type === "process") {
+        progressRef.current.style.visibility = "visible";
+        progressRef.current.style.width = `${process}%`;
+        if (process === 100) {
+          progressRef.current.style.visibility = "hidden";
         }
-      ).then((url) => {
+      }
+      if (type === "url") {
         dispatch({ type: "gifStat", payload: { url } } as any);
         setIsRendering(false);
-      });
-    });
+      }
+    };
   };
 
   const resetWorkspace = (ctx: CanvasRenderingContext2D) => {

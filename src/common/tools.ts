@@ -10,8 +10,7 @@ export function getCurTargetElemIdx(event: any) {
 
 export async function generateGifByImgData(
   imgData: ImageData | ImageData[],
-  delay: number = 100,
-  process: (p: number) => void
+  delay: number = 100
 ) {
   return new Promise((resolve) => {
     try {
@@ -20,23 +19,22 @@ export async function generateGifByImgData(
       // TODO 优化：支持多worker并行处理
       let gif = GIFEncoder();
       imgDataArr.forEach((imgData, idx) => {
-        setTimeout(() => {
-          process?.(Math.floor(((idx + 1) / imgDataArr.length) * 100));
-          const { data, width, height } = imgData;
-          const palette = quantize(data, 256);
-          const index = applyPalette(data, palette);
-          gif.writeFrame(index, width, height, {
-            palette,
-            delay,
-          });
-          if (idx === imgDataArr.length - 1) {
-            gif.finish();
-            const blob = new Blob([gif.bytes()], { type: "image/gif" });
-            const url = URL.createObjectURL(blob);
-            resolve(url);
-          }
+        const { data, width, height } = imgData;
+        const palette = quantize(data, 256);
+        const index = applyPalette(data, palette);
+        gif.writeFrame(index, width, height, {
+          palette,
+          delay,
+        });
+        postMessage({
+          type: "process",
+          process: Math.floor(((idx + 1) / imgDataArr.length) * 100),
         });
       });
+      gif.finish();
+      const blob = new Blob([gif.bytes()], { type: "image/gif" });
+      const url = URL.createObjectURL(blob);
+      resolve(url);
     } catch (error) {
       console.error("generate gif image url error: ", error);
     }
