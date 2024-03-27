@@ -1,9 +1,18 @@
 version: "3"
 services:
-  vtog:
-    image: vtogcaddy
-    volumes:
-      - ./dist:/usr/share/caddy
-      - ./Caddyfile:/etc/caddy/Caddyfile
+  caddy:
+    image: mycaddy
+    restart: unless-stopped
     ports:
-      - 8080:8080
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - ./dist:/usr/share/caddy
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  caddy_data:
+  caddy_config:
