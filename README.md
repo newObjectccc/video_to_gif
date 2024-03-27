@@ -1,4 +1,4 @@
-# ![windows-62x62px](https://github.com/newObjectccc/video_to_gif/assets/42132586/3d21296e-ac77-4b54-adeb-4ea18baf0d7b)
+# ![iPhone-180x180px](https://github.com/newObjectccc/video_to_gif/assets/42132586/88c339ad-7192-4f02-93f8-08f1b763e556)
 
 v2g - video to gif
 
