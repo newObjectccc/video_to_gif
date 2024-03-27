@@ -33,6 +33,13 @@ const Main: React.FC<MainProps> = () => {
   const [state, dispatch] = React.useContext(TransformStateContext);
 
   const onUploadHandler = (file: File) => {
+    if (!videoRef.current!.canPlayType(file.type)) {
+      toast({
+        title: "文件类型错误",
+        description: "你的浏览器不能播放这种格式的视频文件~",
+      });
+      return;
+    }
     let videoUrl = URL.createObjectURL(file);
     const videoObj = { url: videoUrl, type: file.type };
     dispatch({ type: "videoStat", payload: videoObj } as any);

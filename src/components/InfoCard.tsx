@@ -12,7 +12,7 @@ import {
 import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
 import { TransformStateContext } from "@src/App";
-import React from "react";
+import React, { useEffect } from "react";
 
 const notifications = [
   {
@@ -34,10 +34,27 @@ const notifications = [
   },
 ];
 
+type NotifyStateType = [boolean, boolean, boolean, boolean];
 type CardProps = React.ComponentProps<typeof Card>;
 
 export function InfoCard({ className, ...props }: CardProps) {
   const [state, dispatch] = React.useContext(TransformStateContext);
+  const [notifyState, setNotifyState] = React.useState<NotifyStateType>([
+    false,
+    false,
+    false,
+    false,
+  ]);
+  useEffect(() => {
+    const checkStepStat = (prev: NotifyStateType) => {
+      prev[0] = !!state.videoStat.url;
+      prev[1] = prev[0];
+      prev[2] = !!state.gifStat.url;
+      prev[3] = prev[2];
+      return prev.concat() as NotifyStateType;
+    };
+    setNotifyState((prev) => checkStepStat(prev));
+  }, [state.framesOptions, state.videoStat, state.gifStat]);
   return (
     <Card className={cn("w-[420px]", className)} {...props}>
       <CardHeader>
@@ -144,7 +161,11 @@ export function InfoCard({ className, ...props }: CardProps) {
               key={index}
               className="grid grid-cols-[25px_1fr] items-start pb-4 last:mb-0 last:pb-0"
             >
-              <span className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" />
+              <span
+                className={`flex h-2 w-2 translate-y-1 rounded-full ${
+                  !notifyState[index] ? "bg-yellow-500" : "bg-green-500"
+                }`}
+              />
               <div className="space-y-1">
                 <p className="text-sm font-medium leading-none">
                   {notification.title}
