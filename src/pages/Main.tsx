@@ -59,6 +59,7 @@ const Main: React.FC<MainProps> = () => {
     framesStackElemRef.current?.removeChild(
       framesStackElemRef.current?.children[curImageIdx]
     );
+    setTotalFrames((prev) => prev - 1);
   };
 
   const onImgEdit = () => {};
