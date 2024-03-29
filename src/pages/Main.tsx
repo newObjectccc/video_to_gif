@@ -101,7 +101,7 @@ const Main: React.FC<MainProps> = () => {
         const img = document.createElement("img");
         img.width = 120;
         img.height = 60;
-        img.style.zIndex = "2";
+        img.style.zIndex = "2"; // 因为 clipRect 的 z-index 是 1
         img.decoding = "async";
         img.loading = "lazy";
         img.src = canvas.toDataURL();
