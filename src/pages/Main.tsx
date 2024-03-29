@@ -266,7 +266,12 @@ const Main: React.FC<MainProps> = () => {
     return () => {
       video.removeEventListener("play", extractFrame);
     };
-  }, [state.videoStat, state.canvasRect, state.framesOptions, clipRect]);
+  }, [
+    state.videoStat,
+    state.canvasRect,
+    state.framesOptions.framesPicker,
+    clipRect,
+  ]);
 
   return (
     <div className="p-4">
