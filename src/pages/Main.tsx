@@ -4,11 +4,13 @@ import { ToastAction } from "@/components/ui/toast";
 import { toast } from "@/components/ui/use-toast";
 import { TransformStateContext } from "@src/App";
 import { fillNoticeTxtToCanvas, getCurTargetElemIdx } from "@src/common/tools";
+import ClipRect from "@src/components/ClipRect";
 import ExportGift from "@src/components/ExportGif";
 import { ImgMenu } from "@src/components/ImgMenu";
 import PreviewGif from "@src/components/PreviewGif";
 import RenderFramesLine from "@src/components/RenderFramesLine";
 import Upload from "@src/components/Upload";
+import { useClipRect } from "@src/hooks/useClipRect";
 import mediumZoom from "medium-zoom";
 import { useTheme } from "next-themes";
 import React, { MouseEventHandler, useEffect, useRef } from "react";
@@ -25,6 +27,8 @@ const Main: React.FC<MainProps> = () => {
   const [curImageIdx, setCurImageIdx] = React.useState<number>(0);
   const zoomRef = useRef<any>(null);
   const { theme } = useTheme();
+  const { addClipRect, removeClipRect, clipRect, isShowClip } =
+    useClipRect("#videoWrapper");
 
   const [state, dispatch] = React.useContext(TransformStateContext);
 
@@ -97,6 +101,7 @@ const Main: React.FC<MainProps> = () => {
         const img = document.createElement("img");
         img.width = 120;
         img.height = 60;
+        img.style.zIndex = "2";
         img.src = canvas.toDataURL();
         framesStackElem.appendChild(img);
         if (progressRef.current) {
@@ -210,15 +215,39 @@ const Main: React.FC<MainProps> = () => {
 
     const extractFrame = () => {
       resetWorkspace(ctx);
+      dispatch({
+        type: "videoRect",
+        payload: { width: video.videoWidth, height: video.videoHeight },
+      } as any);
       const loop = async () => {
         if (video.paused || video.ended) return;
-        ctx.drawImage(
-          video,
-          0,
-          0,
-          state.canvasRect.width!,
-          state.canvasRect.height!
-        );
+        const videoWidth = video.videoWidth; // 视频的实际宽度
+        const videoHeight = video.videoHeight; // 视频的实际高度
+
+        const scaleX = videoWidth / video.offsetWidth; // 计算宽度的缩放因子
+        const scaleY = videoHeight / video.offsetHeight; // 计算高度的缩放因子
+
+        if (isShowClip && clipRect) {
+          ctx.drawImage(
+            video,
+            clipRect.x! * scaleX,
+            clipRect.y! * scaleY,
+            clipRect.width! * scaleX,
+            clipRect.height! * scaleY,
+            0,
+            0,
+            state.canvasRect.width!,
+            state.canvasRect.height!
+          );
+        } else {
+          ctx.drawImage(
+            video,
+            0,
+            0,
+            state.canvasRect.width!,
+            state.canvasRect.height!
+          );
+        }
         const imageData = ctx.getImageData(
           0,
           0,
@@ -235,11 +264,12 @@ const Main: React.FC<MainProps> = () => {
     return () => {
       video.removeEventListener("play", extractFrame);
     };
-  }, [state.videoStat, state.canvasRect, state.framesOptions]);
+  }, [state.videoStat, state.canvasRect, state.framesOptions, clipRect]);
 
   return (
     <div className="p-4">
       <div className="flex gap-3 items-center">
+        <ClipRect onClip={addClipRect} onReset={removeClipRect}></ClipRect>
         <Upload onUpload={onUploadHandler}></Upload>
         <ExportGift onExport={onExportHandler}></ExportGift>
         <PreviewGif onPreview={previewGif}></PreviewGif>
@@ -247,14 +277,16 @@ const Main: React.FC<MainProps> = () => {
       </div>
       <Separator className="my-6"></Separator>
       <div className="flex flex-row flex-nowrap gap-4">
-        <video
-          className="border-2 w-[420px] h-[210px]"
-          ref={videoRef}
-          width="480"
-          height="240"
-          controls
-          src={state.videoStat.url}
-        ></video>
+        <div id="videoWrapper">
+          <video
+            className="border-2 w-[420px] h-[210px]"
+            ref={videoRef}
+            width="480"
+            height="240"
+            controls
+            src={state.videoStat.url}
+          ></video>
+        </div>
         <canvas
           className="border-2 w-[420px] h-[210px]"
           ref={canvasRef}
