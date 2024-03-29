@@ -2,6 +2,10 @@ export interface VideoObjIntf {
   url?: string;
   type?: string;
 }
+export interface VideoRectIntf {
+  width?: number;
+  height?: number;
+}
 export interface GifObjIntf {
   url?: string;
   size?: number;
@@ -19,6 +23,7 @@ export interface TransformStateIntf {
   gifStat: GifObjIntf;
   framesOptions: FramesPickerIntf;
   canvasRect: CanvasRectIntf;
+  videoRect: VideoRectIntf;
 }
 
 export const defaultTransformState = {
@@ -26,6 +31,7 @@ export const defaultTransformState = {
     url: "",
     type: "",
   },
+  videoRect: { width: 640, height: 320 },
   gifStat: {
     url: "",
     size: 0,
@@ -35,19 +41,21 @@ export const defaultTransformState = {
     framesDelay: 100,
   },
   canvasRect: {
-    width: 480,
-    height: 240,
+    width: 640,
+    height: 320,
   },
 };
 const ACTION_GIF = "gifStat";
 const ACTION_VIDEO = "videoStat";
 const ACTION_FRAMES = "framesOptions";
 const ACTION_CANVAS = "canvasRect";
+const ACTION_VIDEO_RECT = "videoRect";
 
 export const transformDispatch = (
   state = defaultTransformState,
   action: {
     type:
+      | typeof ACTION_VIDEO_RECT
       | typeof ACTION_GIF
       | typeof ACTION_VIDEO
       | typeof ACTION_FRAMES
@@ -69,6 +77,11 @@ export const transformDispatch = (
       return {
         ...state,
         canvasRect: { ...state.canvasRect, ...action.payload },
+      };
+    case ACTION_VIDEO_RECT:
+      return {
+        ...state,
+        videoRect: { ...state.videoRect, ...action.payload },
       };
     default:
       return state;
