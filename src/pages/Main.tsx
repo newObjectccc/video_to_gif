@@ -102,6 +102,8 @@ const Main: React.FC<MainProps> = () => {
         img.width = 120;
         img.height = 60;
         img.style.zIndex = "2";
+        img.decoding = "async";
+        img.loading = "lazy";
         img.src = canvas.toDataURL();
         framesStackElem.appendChild(img);
         if (progressRef.current) {
