@@ -169,6 +169,14 @@ export function InfoCard({ className, ...props }: CardProps) {
               <div className="space-y-1">
                 <p className="text-sm font-medium leading-none">
                   {notification.title}
+                  {notifyState[index] ? (
+                    " ✅ "
+                  ) : (
+                    <span className="inline-block animate-spin-slow"> ⏳ </span>
+                  )}
+                  {index === 0 && notifyState[index] && (
+                    <span className="text-xs text-muted-foreground">{`源尺寸：${state.videoRect.width}x${state.videoRect.height}`}</span>
+                  )}
                 </p>
                 <p className="text-sm text-muted-foreground">
                   {notification.description}
