@@ -63,9 +63,9 @@ export function InfoCard({ className, ...props }: CardProps) {
           视频播放时同步采样，结束或暂停都会停止采样，请直接拉动进度条到你想要的开始点或直接从头开始
         </CardDescription>
       </CardHeader>
-      <CardContent className="grid gap-4">
-        <div className=" flex items-center space-x-4 rounded-md border p-4">
-          <Scan />
+      <CardContent className="grid gap-2">
+        <div className="flex items-center space-x-4 rounded-md border p-2">
+          <Scan className="size-4" />
           <div className="">
             <p className="text-sm font-medium leading-none">帧采样率</p>
           </div>
@@ -89,8 +89,8 @@ export function InfoCard({ className, ...props }: CardProps) {
             />
           </div>
         </div>
-        <div className=" flex items-center space-x-4 rounded-md border p-4">
-          <Frame />
+        <div className="flex items-center space-x-4 rounded-md border p-2">
+          <Frame className="size-4" />
           <div className="">
             <p className="text-sm font-medium leading-none">帧延迟(毫秒)</p>
           </div>
@@ -111,8 +111,8 @@ export function InfoCard({ className, ...props }: CardProps) {
             />
           </div>
         </div>
-        <div className=" flex items-center space-x-4 rounded-md border p-4">
-          <Ruler />
+        <div className="flex items-center space-x-4 rounded-md border p-2">
+          <Ruler className="size-4" />
           <div className="">
             <p className="text-sm font-medium leading-none">gif宽度</p>
           </div>
@@ -133,9 +133,9 @@ export function InfoCard({ className, ...props }: CardProps) {
             />
           </div>
         </div>
-        <div className=" flex items-center space-x-4 rounded-md border p-4">
-          <PencilRuler />
-          <div className="">
+        <div className="flex items-center space-x-4 rounded-md border p-2">
+          <PencilRuler className="size-4" />
+          <div>
             <p className="text-sm font-medium leading-none">gif高度</p>
           </div>
           <div className="flex items-center flex-1 justify-end">

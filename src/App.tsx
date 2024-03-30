@@ -32,7 +32,7 @@ const App = () => {
           <img src={logo} alt="v2g" />
           V2G -<span className="font-normal text-lg">video to gif</span>
         </div>
-        <div className="flex items-center space-x-4 rounded-md border p-4">
+        <div className="flex items-center space-x-4 rounded-md border p-2">
           <Palette />
           <div className="flex-1">
             <p className="text-sm font-medium leading-none">主题切换</p>
@@ -48,7 +48,7 @@ const App = () => {
       </div>
       <Separator className="my-4"></Separator>
       <div className="flex flex-row flex-nowrap w-full">
-        <InfoCard className="rounded-lg m-4 flex flex-col flex-nowrap"></InfoCard>
+        <InfoCard className="rounded-lg ml-4 mt-1 flex flex-col flex-nowrap"></InfoCard>
         <div className="w-full">{routesElem}</div>
       </div>
       <Toaster />

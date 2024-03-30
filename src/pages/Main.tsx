@@ -315,7 +315,7 @@ const Main: React.FC<MainProps> = () => {
   };
 
   return (
-    <div className="p-4 w-full">
+    <div className="py-1 px-4 w-full">
       <div className="flex gap-3 items-center">
         <ClipRect onClip={addClipRect} onReset={removeClipRect}></ClipRect>
         <Upload onUpload={onUploadHandler}></Upload>
