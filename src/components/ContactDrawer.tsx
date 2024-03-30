@@ -1,5 +1,4 @@
 import { Contact } from "lucide-react";
-import * as React from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -14,13 +13,7 @@ import wx from "../../public/wx.png";
 
 interface ContactDrawerProps {}
 
-export const ContactDrawer = () => {
-  const [goal, setGoal] = React.useState(350);
-
-  const onClick = (adjustment: number) => {
-    setGoal(Math.max(200, Math.min(400, goal + adjustment)));
-  };
-
+export const ContactDrawer: React.FC<ContactDrawerProps> = () => {
   return (
     <Drawer>
       <DrawerTrigger asChild>
@@ -40,12 +33,6 @@ export const ContactDrawer = () => {
           <div className="p-4 pb-0">
             <img src={wx} alt="v2g" />
           </div>
-          {/* <DrawerFooter>
-            <Button>Submit</Button>
-            <DrawerClose asChild>
-              <Button variant="outline">Cancel</Button>
-            </DrawerClose>
-          </DrawerFooter> */}
         </div>
       </DrawerContent>
     </Drawer>
