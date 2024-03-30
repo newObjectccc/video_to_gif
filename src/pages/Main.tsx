@@ -335,21 +335,20 @@ const Main: React.FC<MainProps> = () => {
           ></video>
         </div>
         <canvas
-          className="border-2"
+          className="border"
           width={state.canvasRect.width}
           height={state.canvasRect.height}
           ref={canvasRef}
         ></canvas>
-
         <div
           id="preview"
-          className="flex justify-center items-center border-2 border-dashed"
+          className="flex justify-center aspect-video items-center border border-dashed"
         >
           {state.gifStat.url ? (
             <img
               style={{
-                maxWidth: previewRect.width,
-                maxHeight: previewRect.height,
+                width: previewRect.width - 2,
+                height: previewRect.height - 2,
               }}
               src={state.gifStat.url}
               className="object-contain"
