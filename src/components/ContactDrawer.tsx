@@ -1,4 +1,4 @@
-import { Download } from "lucide-react";
+import { Contact } from "lucide-react";
 import * as React from "react";
 
 import { Button } from "@/components/ui/button";
@@ -25,7 +25,7 @@ export const ContactDrawer = () => {
     <Drawer>
       <DrawerTrigger asChild>
         <Button variant="outline">
-          <Download className="mr-2 size-4" />
+          <Contact className="mr-2 size-4" />
           联系作者
         </Button>
       </DrawerTrigger>
