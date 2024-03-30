@@ -59,13 +59,14 @@ export const useClipRect = (target: string) => {
       height: 100,
     });
 
-    clipRef.current.id = "clipRect";
+    clipRef.current.id = "__clipRect";
     targetElem.appendChild(clipRef.current);
-    bindInteract("#clipRect", (pos) => {
+    bindInteract("#__clipRect", (pos) => {
       clearTimeout(timer.current);
       timer.current = setTimeout(() => {
         setClipRect((prev: any) => {
           const newRect = { ...prev, ...pos };
+          console.log("🚀 ~ setClipRect ~ newRect:", newRect);
           return newRect;
         });
       }, 300);
@@ -82,7 +83,7 @@ export const useClipRect = (target: string) => {
 };
 
 const bindInteract = (
-  target: string,
+  tar: string,
   cb: (pos: Partial<ClipRectOptIntf>) => void
 ) => {
   let x = 0,
@@ -91,7 +92,7 @@ const bindInteract = (
     restriction: "parent",
   });
 
-  interact(target)
+  interact(tar)
     .draggable({
       modifiers: [restrictToParent],
       listeners: {

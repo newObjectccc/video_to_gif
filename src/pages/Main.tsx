@@ -5,6 +5,7 @@ import { toast } from "@/components/ui/use-toast";
 import { TransformStateContext } from "@src/App";
 import { fillNoticeTxtToCanvas, getCurTargetElemIdx } from "@src/common/tools";
 import ClipRect from "@src/components/ClipRect";
+import { ContactDrawer } from "@src/components/ContactDrawer";
 import ExportGift from "@src/components/ExportGif";
 import { ImgMenu } from "@src/components/ImgMenu";
 import PreviewGif from "@src/components/PreviewGif";
@@ -25,6 +26,7 @@ const Main: React.FC<MainProps> = () => {
   const [isRendering, setIsRendering] = React.useState<boolean>(false);
   const [totalFrames, setTotalFrames] = React.useState<number>(0);
   const [curImageIdx, setCurImageIdx] = React.useState<number>(0);
+  const [previewRect, setPreviewRect] = React.useState<any>({});
   const zoomRef = useRef<any>(null);
   const { theme } = useTheme();
   const { addClipRect, removeClipRect, clipRect, isShowClip } =
@@ -273,48 +275,90 @@ const Main: React.FC<MainProps> = () => {
     clipRect,
   ]);
 
+  useEffect(() => {
+    const handleResize = () => {
+      const previewElem = document.getElementById("preview");
+      const videoWrapper = document.getElementById("videoWrapper");
+      if (
+        !canvasRef.current ||
+        !previewElem ||
+        !videoWrapper ||
+        !videoRef.current
+      )
+        return;
+      canvasRef.current.style.width = `${previewElem.offsetWidth}px`;
+      canvasRef.current.style.height = `${previewElem.offsetHeight}px`;
+      videoWrapper.style.width = `${previewElem.offsetWidth}px`;
+      videoWrapper.style.height = `${previewElem.offsetHeight}px`;
+      videoRef.current.style.width = `${previewElem.offsetWidth}px`;
+      videoRef.current.style.height = `${previewElem.offsetHeight}px`;
+      setPreviewRect({
+        width: previewElem.offsetWidth,
+        height: previewElem.offsetHeight,
+      });
+    };
+
+    window.addEventListener("resize", handleResize);
+    handleResize();
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  const noUrlPreviewRender = () => {
+    return isRendering ? (
+      <Skeleton className="w-full h-full rounded-xl" />
+    ) : (
+      "点击预览按钮生成GIF动画~"
+    );
+  };
+
   return (
-    <div className="p-4">
+    <div className="p-4 w-full">
       <div className="flex gap-3 items-center">
         <ClipRect onClip={addClipRect} onReset={removeClipRect}></ClipRect>
         <Upload onUpload={onUploadHandler}></Upload>
         <ExportGift onExport={onExportHandler}></ExportGift>
         <PreviewGif onPreview={previewGif}></PreviewGif>
         <RenderFramesLine onRender={onStackRenderHandler}></RenderFramesLine>
+        <ContactDrawer></ContactDrawer>
       </div>
       <Separator className="my-6"></Separator>
-      <div className="flex flex-row flex-nowrap gap-4">
+      <div className="grid grid-cols-3 gap-4 w-full">
         <div id="videoWrapper">
           <video
-            className="border-2 w-[420px] h-[210px]"
+            className="object-fill"
             ref={videoRef}
-            width="480"
-            height="240"
             controls
             src={state.videoStat.url}
           ></video>
         </div>
         <canvas
-          className="border-2 w-[420px] h-[210px]"
-          ref={canvasRef}
+          className="border-2"
           width={state.canvasRect.width}
           height={state.canvasRect.height}
+          ref={canvasRef}
         ></canvas>
-        {state.gifStat.url ? (
-          <img
-            className="w-[420px] h-[210px]"
-            src={state.gifStat.url}
-            alt="loading..."
-          />
-        ) : (
-          <div className="w-[420px] h-[210px] flex justify-center items-center border-2 border-dashed">
-            {isRendering ? (
-              <Skeleton className="w-[380px] h-[170px] rounded-xl" />
-            ) : (
-              "点击预览按钮生成GIF动画~"
-            )}
-          </div>
-        )}
+
+        <div
+          id="preview"
+          className="flex justify-center items-center border-2 border-dashed"
+        >
+          {state.gifStat.url ? (
+            <img
+              style={{
+                maxWidth: previewRect.width,
+                maxHeight: previewRect.height,
+              }}
+              src={state.gifStat.url}
+              className="object-contain"
+              alt="loading..."
+            />
+          ) : (
+            noUrlPreviewRender()
+          )}
+        </div>
       </div>
       <div
         ref={progressRef}
@@ -324,7 +368,7 @@ const Main: React.FC<MainProps> = () => {
         onRemove={onImgRemove}
         onEdit={onImgEdit}
         onPreview={onImgPreview}
-        className="flex flex-nowrap overflow-x-auto h-[130px] w-[1300px] mb-2 border border-dashed p-2"
+        className="flex flex-nowrap overflow-x-auto h-[130px] w-full mb-2 border border-dashed p-2"
       >
         <div
           ref={framesStackElemRef}
