@@ -53,10 +53,6 @@ export const ImgMenu: React.FC<ImgMenuProps> = (props) => {
         break;
       case "edit":
         onEdit?.();
-        toast({
-          title: "该功能还在开发中",
-          description: "去给作者点个star或者留下issue，催促新功能~",
-        });
         break;
       case "remove":
         onRemove?.();
