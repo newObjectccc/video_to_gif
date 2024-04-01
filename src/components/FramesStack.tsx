@@ -12,18 +12,23 @@ import React, {
   useImperativeHandle,
   useRef,
 } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface FramesStackProps {
+  preventNav?: boolean;
   ref: any;
 }
 export const FramesStack: React.FC<React.PropsWithRef<FramesStackProps>> =
   forwardRef((props, ref) => {
+    const { preventNav } = props;
     const [state, dispatch] = React.useContext(TransformStateContext);
     const framesStackElemRef = useRef<HTMLDivElement>(null);
     const progressRef = useRef<HTMLDivElement>(null);
+    const isMounted = useRef<boolean>(false);
     const [curImageIdx, setCurImageIdx] = React.useState<number>(0);
     const { theme } = useTheme();
     const zoomRef = useRef<any>(null);
+    const navigate = useNavigate();
     const { cacheFrames } = state;
 
     const onMenuShow = (e: MouseEventHandler<HTMLDivElement>) => {
@@ -41,7 +46,16 @@ export const FramesStack: React.FC<React.PropsWithRef<FramesStackProps>> =
     };
 
     const onImgEdit = () => {
-      if (cacheFrames.length === 0) return;
+      if (preventNav) return;
+      if (cacheFrames.length === 0)
+        return toast({
+          title: "没有缓存帧",
+          description: "请检查左侧步骤是否有错误~",
+          action: <ToastAction altText="去上传">Undo</ToastAction>,
+        });
+      document.startViewTransition(() => {
+        navigate("/edit");
+      });
     };
 
     const onImgPreview = () => {
@@ -52,7 +66,7 @@ export const FramesStack: React.FC<React.PropsWithRef<FramesStackProps>> =
       zoom.open();
     };
 
-    const transformImgDataToDom = (data: ImageData) => {
+    const transformImgDataToDom = () => {
       const framesStackElem = framesStackElemRef.current;
       if (!framesStackElem) return;
       if (cacheFrames.length === 0)
@@ -75,7 +89,6 @@ export const FramesStack: React.FC<React.PropsWithRef<FramesStackProps>> =
           img.width = 120;
           img.height = 60;
           img.style.zIndex = "2"; // 因为 clipRect 的 z-index 是 1
-          img.decoding = "async";
           img.loading = "lazy";
           img.src = canvas.toDataURL();
           framesStackElem.appendChild(img);
@@ -111,6 +124,11 @@ export const FramesStack: React.FC<React.PropsWithRef<FramesStackProps>> =
     }, [theme]);
 
     useEffect(() => {
+      if (preventNav && !isMounted.current) {
+        isMounted.current = true;
+        transformImgDataToDom();
+        return;
+      }
       if (cacheFrames.length === 0 && framesStackElemRef.current)
         framesStackElemRef.current.innerHTML = `<div
               style="

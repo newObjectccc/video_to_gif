@@ -33,6 +33,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "cmdk": "^1.0.0",
+    "embla-carousel-react": "^8.0.0",
     "gifenc": "^1.0.3",
     "interactjs": "^1.10.26",
     "lucide-react": "^0.363.0",

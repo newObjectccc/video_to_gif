@@ -11,7 +11,7 @@ import { routes } from "@src/routes";
 import { Palette } from "lucide-react";
 import { useTheme } from "next-themes";
 import React, { Dispatch, useReducer } from "react";
-import { useRoutes } from "react-router-dom";
+import { useLocation, useRoutes } from "react-router-dom";
 import logo from "../public/iconLg-48x48px.png";
 
 export const TransformStateContext = React.createContext<
@@ -24,6 +24,7 @@ const App = () => {
     defaultTransformState
   );
   const routesElem = useRoutes(routes);
+  const location = useLocation();
   const { theme, setTheme } = useTheme();
   return (
     <TransformStateContext.Provider value={[state, dispatch as any]}>
@@ -48,7 +49,9 @@ const App = () => {
       </div>
       <Separator className="my-4"></Separator>
       <div className="flex flex-row flex-nowrap w-full">
-        <InfoCard className="rounded-lg ml-4 mt-1 flex flex-col flex-nowrap"></InfoCard>
+        {location.pathname === "/" ? (
+          <InfoCard className="rounded-lg ml-4 mt-1 flex flex-col flex-nowrap"></InfoCard>
+        ) : null}
         <div className="w-full">{routesElem}</div>
       </div>
       <Toaster />
