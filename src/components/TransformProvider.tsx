@@ -18,12 +18,20 @@ export interface CanvasRectIntf {
   width?: number;
   height?: number;
 }
+
+export interface CacheFrameIntf {
+  data: Uint8ClampedArray;
+  width: number;
+  height: number;
+  colorSpace: PredefinedColorSpace;
+}
 export interface TransformStateIntf {
   videoStat: VideoObjIntf;
   gifStat: GifObjIntf;
   framesOptions: FramesPickerIntf;
   canvasRect: CanvasRectIntf;
   videoRect: VideoRectIntf;
+  cacheFrames: CacheFrameIntf[];
 }
 
 export const defaultTransformState = {
@@ -40,6 +48,7 @@ export const defaultTransformState = {
     framesPicker: 1,
     framesDelay: 100,
   },
+  cacheFrames: [],
   canvasRect: {
     width: 640,
     height: 320,
@@ -50,6 +59,7 @@ const ACTION_VIDEO = "videoStat";
 const ACTION_FRAMES = "framesOptions";
 const ACTION_CANVAS = "canvasRect";
 const ACTION_VIDEO_RECT = "videoRect";
+const ACTION_CACHE_FRAMES = "cacheFrames";
 
 export const transformDispatch = (
   state = defaultTransformState,
@@ -59,7 +69,8 @@ export const transformDispatch = (
       | typeof ACTION_GIF
       | typeof ACTION_VIDEO
       | typeof ACTION_FRAMES
-      | typeof ACTION_CANVAS;
+      | typeof ACTION_CANVAS
+      | typeof ACTION_CACHE_FRAMES;
     payload: any;
   }
 ) => {
@@ -77,6 +88,11 @@ export const transformDispatch = (
       return {
         ...state,
         canvasRect: { ...state.canvasRect, ...action.payload },
+      };
+    case ACTION_CACHE_FRAMES:
+      return {
+        ...state,
+        cacheFrames: action.payload.concat(),
       };
     case ACTION_VIDEO_RECT:
       return {
