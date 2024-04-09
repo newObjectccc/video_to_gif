@@ -1,5 +1,6 @@
 import { Frame, PencilRuler, Ruler, Scan } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -10,20 +11,23 @@ import {
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
-import { ImgEditParamsContext } from "@src/contexts/ImgEditParamsContext";
 import React from "react";
 
 interface CardProps {
   className?: string;
+  imgEditState: {
+    isApplyAll: boolean;
+    brightness: number[];
+    grayscale: boolean;
+  };
+  onChange: (field: string, value: any) => void;
 }
 
 export const ImgEditCard: React.FC<CardProps> = (props) => {
-  const { className } = props;
-  const [imgEditState, imgEditDispatch] =
-    React.useContext(ImgEditParamsContext);
+  const { className, imgEditState, onChange } = props;
 
   return (
-    <Card className={cn("w-[420px]", className)} {...props}>
+    <Card className={cn("w-[420px]", className)}>
       <CardHeader>
         <CardTitle className="mb-3">编辑合成面板</CardTitle>
         <CardDescription>
@@ -43,45 +47,48 @@ export const ImgEditCard: React.FC<CardProps> = (props) => {
             <Switch
               disabled
               checked={imgEditState.isApplyAll}
-              onCheckedChange={(val) => {
-                imgEditDispatch({
-                  type: "isApplyAll",
-                  payload: val,
-                } as any);
-              }}
+              onCheckedChange={(val) => onChange("isApplyAll", val)}
             ></Switch>
           </div>
         </div>
         <div className="flex items-center space-x-4 rounded-md border px-2 h-10">
-          <Frame className="size-4" />
-          <p className="text-sm font-medium leading-none">文字编辑</p>
-        </div>
-        <div className="flex items-center space-x-4 rounded-md border px-2 h-10">
-          <Ruler className="size-4" />
-          <p className="text-sm font-medium leading-none">蒙层特效</p>
+          <PencilRuler className="size-4" />
+          <p className="text-sm font-medium leading-none">是否开启灰度</p>
+          <div className="flex items-center flex-1 justify-end">
+            <span className="text-sm font-medium leading-none mr-1">
+              {imgEditState.grayscale ? "是" : "否"}
+            </span>
+            <Switch
+              checked={imgEditState.grayscale}
+              onCheckedChange={(val) => onChange("grayscale", val)}
+            ></Switch>
+          </div>
         </div>
         <div className="flex items-center space-x-4 rounded-md border px-2 h-10">
           <PencilRuler className="size-4" />
           <p className="text-sm font-medium leading-none">亮度调节</p>
           <div className="flex items-center flex-1 justify-end">
             <span className="text-sm font-medium leading-none mr-1">
-              {imgEditState.brightness}%
+              {imgEditState.brightness[0]}%
             </span>
             <Slider
-              value={[imgEditState.brightness]}
+              value={imgEditState.brightness}
               max={100}
               min={0}
               step={1}
-              onValueChange={(val) => {
-                imgEditDispatch({
-                  type: "brightness",
-                  payload: val[0],
-                } as any);
-              }}
+              onValueChange={(val) => onChange("brightness", val)}
               className={cn("w-[60%]", "ml-2")}
             />
           </div>
         </div>
+        <Button className="text-sm font-medium leading-none">
+          <Frame className="mr-2" size={16} />
+          文字编辑
+        </Button>
+        <Button className="text-sm font-medium leading-none">
+          <Ruler className="mr-2" size={16} />
+          蒙层特效
+        </Button>
       </CardContent>
     </Card>
   );
