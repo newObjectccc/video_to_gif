@@ -1,8 +1,11 @@
 import {
   Carousel,
+  CarouselContent,
+  CarouselItem,
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { imgDataToUrl } from "@src/common/tools";
 import { ImgEditParamsContext } from "@src/contexts/ImgEditParamsContext";
 import { TransformStateContext } from "@src/contexts/TransformProvider";
 import { useContext } from "react";
@@ -17,7 +20,8 @@ export const ImgCarousel: React.FC<ImgCarouselProps> = (props) => {
   return (
     <div className="w-full flex">
       <Carousel className="w-full ml-20 md:max-w-md lg:max-w-lg xl:max-w-xl flex items-center border border-gray-200 shadow-lg">
-        {/* {transformState.cacheFrames.map((img, idx) => {
+        <CarouselContent>
+          {transformState.cacheFrames.map((img, idx) => {
             let imgSrc = img as unknown as string;
             if (typeof img !== "string") {
               imgSrc = imgDataToUrl(img);
@@ -27,7 +31,8 @@ export const ImgCarousel: React.FC<ImgCarouselProps> = (props) => {
                 <img src={imgSrc} alt="img-frame" />
               </CarouselItem>
             );
-          })} */}
+          })}
+        </CarouselContent>
         <CarouselPrevious />
         <CarouselNext />
       </Carousel>
