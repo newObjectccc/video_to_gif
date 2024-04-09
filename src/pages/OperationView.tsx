@@ -92,14 +92,17 @@ export const OperationView: React.FC<OperationViewProps> = (props) => {
   };
 
   useEffect(() => {
-    let width = transformState.cacheFrames[currentIdx]?.width ?? 0;
-    let height = transformState.cacheFrames[currentIdx]?.height ?? 0;
-    width = width > 640 ? 640 : width;
-    height = height > 480 ? 480 : height;
+    if (!containerRef.current) return;
+    let width = transformState.cacheFrames[currentIdx]?.width;
+    let height = transformState.cacheFrames[currentIdx]?.height;
+    const scaleRatio = (window.innerWidth - 480) / width;
+    width = width * scaleRatio;
+    height = height * scaleRatio;
     stageRef.current = new Konva.Stage({
-      container: containerRef.current!,
+      container: containerRef.current,
       width,
       height,
+      scale: { x: scaleRatio, y: scaleRatio },
     });
     layerRef.current = new Konva.Layer();
     stageRef.current.add(layerRef.current);
