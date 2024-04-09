@@ -16,11 +16,13 @@ import { useNavigate } from "react-router-dom";
 
 interface FramesStackProps {
   preventNav?: boolean;
+  preventMenu?: boolean;
+  onFrameClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
   ref: any;
 }
 export const FramesStack: React.FC<React.PropsWithRef<FramesStackProps>> =
   forwardRef((props, ref) => {
-    const { preventNav } = props;
+    const { preventNav, preventMenu, onFrameClick } = props;
     const [state, dispatch] = React.useContext(TransformStateContext);
     const framesStackElemRef = useRef<HTMLDivElement>(null);
     const progressRef = useRef<HTMLDivElement>(null);
@@ -83,7 +85,7 @@ export const FramesStack: React.FC<React.PropsWithRef<FramesStackProps>> =
           img.height = 60;
           img.style.zIndex = "2"; // 因为 clipRect 的 z-index 是 1
           img.loading = "lazy";
-          img.src = imgDataToUrl(imageData);
+          img.src = imgDataToUrl(imageData)!;
           framesStackElem.appendChild(img);
           if (progressRef.current) {
             progressRef.current.style.width = `${
@@ -91,6 +93,7 @@ export const FramesStack: React.FC<React.PropsWithRef<FramesStackProps>> =
             }%`;
             if (idx + 1 === cacheFrames.length) {
               progressRef.current.style.visibility = "hidden";
+              if (preventMenu) return;
               zoomRef.current = mediumZoom(
                 framesStackElem.querySelectorAll("img"),
                 {
@@ -108,6 +111,7 @@ export const FramesStack: React.FC<React.PropsWithRef<FramesStackProps>> =
     };
 
     useEffect(() => {
+      if (preventMenu) return;
       zoomRef.current?.update({
         background:
           theme === "light"
@@ -146,12 +150,14 @@ export const FramesStack: React.FC<React.PropsWithRef<FramesStackProps>> =
           onRemove={onImgRemove}
           onEdit={onImgEdit}
           onPreview={onImgPreview}
+          disabled={preventMenu}
           className="flex flex-nowrap overflow-x-auto h-[130px] w-full mb-2 border border-dashed p-2"
         >
           <div
             ref={framesStackElemRef}
             className="flex flex-nowrap h-full gap-2 w-full"
             onContextMenu={onMenuShow as any}
+            onClick={onFrameClick}
           ></div>
         </ImgMenu>
         {cacheFrames.length ? (
