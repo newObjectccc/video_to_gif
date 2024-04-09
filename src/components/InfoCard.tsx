@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
-import { TransformStateContext } from "@src/App";
+import { TransformStateContext } from "@src/contexts/TransformProvider";
 import React, { useEffect } from "react";
 
 const notifications = [

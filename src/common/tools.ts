@@ -72,3 +72,13 @@ export function fillNoticeTxtToCanvas(
   ctx.textAlign = textAlign;
   ctx.fillText(text, width / 2, height / 2);
 }
+
+export function imgDataToUrl(data: ImageData) {
+  const canvas = document.createElement("canvas");
+  canvas.width = data.width;
+  canvas.height = data.height;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return "";
+  ctx.putImageData(data, 0, 0);
+  return canvas.toDataURL();
+}

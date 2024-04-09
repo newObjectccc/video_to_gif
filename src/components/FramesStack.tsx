@@ -1,8 +1,8 @@
 import { ToastAction } from "@/components/ui/toast";
 import { toast } from "@/components/ui/use-toast";
-import { TransformStateContext } from "@src/App";
-import { getCurTargetElemIdx } from "@src/common/tools";
+import { getCurTargetElemIdx, imgDataToUrl } from "@src/common/tools";
 import { ImgMenu } from "@src/components/ImgMenu";
+import { TransformStateContext } from "@src/contexts/TransformProvider";
 import mediumZoom from "medium-zoom";
 import { useTheme } from "next-themes";
 import React, {
@@ -78,19 +78,12 @@ export const FramesStack: React.FC<React.PropsWithRef<FramesStackProps>> =
       framesStackElemRef.current.innerHTML = "";
       cacheFrames.forEach((imageData, idx) => {
         setTimeout(() => {
-          const { width, height } = imageData;
-          const canvas = document.createElement("canvas");
-          canvas.width = width;
-          canvas.height = height;
-          const ctx = canvas.getContext("2d");
-          if (!ctx) return;
-          ctx.putImageData(imageData, 0, 0);
           const img = document.createElement("img");
           img.width = 120;
           img.height = 60;
           img.style.zIndex = "2"; // 因为 clipRect 的 z-index 是 1
           img.loading = "lazy";
-          img.src = canvas.toDataURL();
+          img.src = imgDataToUrl(imageData);
           framesStackElem.appendChild(img);
           if (progressRef.current) {
             progressRef.current.style.width = `${

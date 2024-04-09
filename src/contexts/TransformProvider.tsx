@@ -1,3 +1,5 @@
+import React, { Dispatch, useReducer } from "react";
+
 export interface VideoObjIntf {
   url?: string;
   type?: string;
@@ -102,4 +104,24 @@ export const transformDispatch = (
     default:
       return state;
   }
+};
+
+export const TransformStateContext = React.createContext<
+  [TransformStateIntf, Dispatch<typeof transformDispatch>]
+>([defaultTransformState, () => {}]);
+
+export const TransformStateProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  const [state, dispatch] = useReducer(
+    transformDispatch,
+    defaultTransformState
+  );
+  return (
+    <TransformStateContext.Provider value={[state, dispatch as any]}>
+      {children}
+    </TransformStateContext.Provider>
+  );
 };

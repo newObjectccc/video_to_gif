@@ -1,5 +1,5 @@
 import App from "@src/App";
-import { ThemeProvider } from "@src/components/ThemeProvider";
+import { ThemeProvider } from "@src/contexts/ThemeProvider";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
