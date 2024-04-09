@@ -74,6 +74,7 @@ export function fillNoticeTxtToCanvas(
 }
 
 export function imgDataToUrl(data: ImageData) {
+  if (!data) return;
   const canvas = document.createElement("canvas");
   canvas.width = data.width;
   canvas.height = data.height;
