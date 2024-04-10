@@ -5,45 +5,53 @@ import { TransformStateContext } from "@src/contexts/TransformProvider";
 import Konva from "konva";
 import React, { useEffect } from "react";
 
+const defaultImgEditState = {
+  brightness: 50,
+  grayscale: false,
+};
+
+type ImgState = { cacheImg: Konva.Image | null } & Pick<
+  typeof defaultImgEditState,
+  "brightness" | "grayscale"
+>;
+
 interface OperationViewProps {}
 export const OperationView: React.FC<OperationViewProps> = (props) => {
   const [currentIdx, setCurrentIdx] = React.useState<number>(0);
   const [transformState, transformStateDispatch] = React.useContext(
     TransformStateContext
   );
-  const [imgEditState, setImgEditState] = React.useState({
-    isApplyAll: true,
-    brightness: [50],
-    grayscale: false,
-  });
+  const [imgEditState, setImgEditState] = React.useState(defaultImgEditState);
   const containerRef = React.useRef<HTMLDivElement>(null);
   const stageRef = React.useRef<Konva.Stage | null>(null);
   const layerRef = React.useRef<Konva.Layer | null>(null);
-  const currentImgRef = React.useRef<Konva.Image | null>(null);
+  const currentImgRef = React.useRef<ImgState[]>([]);
 
   const frameClick = (evt: any) => {
     const idx = getCurTargetElemIdx(evt);
     setCurrentIdx(idx);
+    let mergedState = defaultImgEditState;
+    const editedImage = currentImgRef.current[idx];
+
+    // 被编辑过
+    if (editedImage) {
+      mergedState = {
+        ...mergedState,
+        brightness: editedImage.brightness,
+        grayscale: editedImage.grayscale,
+      };
+    }
+    setImgEditState(mergedState);
   };
 
   const onChangeHandler = (field: string, value: any) => {
     setImgEditState((state) => ({ ...state, [field]: value }));
+    const img = currentImgRef.current[currentIdx];
     if (field === "grayscale") {
-      if (value) {
-        currentImgRef.current?.cache();
-        currentImgRef.current?.filters([
-          Konva.Filters.Grayscale,
-          Konva.Filters.Brighten,
-        ]);
-      } else {
-        currentImgRef.current?.cache();
-        currentImgRef.current?.filters([Konva.Filters.Brighten]);
-      }
+      img.grayscale = value;
     }
     if (field === "brightness") {
-      let brightness = value[0];
-      brightness = brightness > 50 ? brightness - 50 : -1 * (50 - brightness);
-      currentImgRef.current?.brightness((brightness * 2) / 100);
+      img.brightness = value;
     }
   };
 
@@ -63,33 +71,63 @@ export const OperationView: React.FC<OperationViewProps> = (props) => {
       fill,
       draggable: true,
     });
-    layerRef.current?.add(simpleText);
+    layerRef.current!.add(simpleText);
     simpleText.moveToTop();
-    stageRef.current?.add(layerRef.current!);
+    stageRef.current!.add(layerRef.current!);
   };
 
-  const drawCurrentImageData: () => Promise<Konva.Image> = () => {
-    return new Promise((resolve) => {
-      const src = imgDataToUrl(transformState.cacheFrames[currentIdx]);
-      if (!src) return;
-      const imageObj = new Image();
-      imageObj.src = src;
-      imageObj.onload = function () {
-        const img = new Konva.Image({
-          x: 0,
-          y: 0,
-          image: imageObj,
-        });
-        img.cache();
-        img.filters([Konva.Filters.Brighten]);
-        layerRef.current?.add(img);
-        img.moveToBottom();
-        stageRef.current?.add(layerRef.current!);
-        currentImgRef.current = img;
-        resolve(img);
-      };
-    });
+  const drawCurrentImageData = () => {
+    const src = imgDataToUrl(transformState.cacheFrames[currentIdx]);
+    if (!src) return;
+    let img = currentImgRef.current[currentIdx];
+    if (img) return;
+    img = {
+      brightness: imgEditState.brightness,
+      grayscale: imgEditState.grayscale,
+      cacheImg: null,
+    };
+    const imageObj = new Image();
+    imageObj.src = src;
+    imageObj.onload = function () {
+      img.cacheImg = new Konva.Image({
+        x: 0,
+        y: 0,
+        image: imageObj,
+      });
+      currentImgRef.current[currentIdx] = img;
+      setEditStateToImg(img);
+      layerRef.current!.add(img.cacheImg);
+      stageRef.current!.add(layerRef.current!);
+    };
   };
+
+  const setEditStateToImg = (imgState: ImgState) => {
+    let { cacheImg, brightness, grayscale } = imgState;
+    const filers = [Konva.Filters.Brighten];
+    if (grayscale) filers.push(Konva.Filters.Grayscale);
+    cacheImg?.cache();
+    cacheImg?.filters(filers);
+    brightness = brightness > 50 ? brightness - 50 : -1 * (50 - brightness);
+    cacheImg?.brightness((brightness * 2) / 100);
+    cacheImg?.moveToTop();
+    putImageDataToStackFrames();
+  };
+
+  const putImageDataToStackFrames = () => {
+    const img = currentImgRef.current[currentIdx];
+    if (!img) return;
+    const imageData = img.cacheImg?.image();
+    if (!imageData) return;
+    console.log("🚀 ~ putImageDataToStackFrames ~ imageData:", imageData);
+    // const ctx = transformState.cacheFrames[currentIdx]
+    // ctx?.putImageData(imageData, 0, 0);
+  };
+
+  useEffect(() => {
+    if (!currentImgRef.current[currentIdx]) return;
+    console.log("🚀 ~ useEffect ~ currentIdx:", currentIdx);
+    setEditStateToImg(currentImgRef.current[currentIdx]);
+  }, [imgEditState]);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -106,12 +144,6 @@ export const OperationView: React.FC<OperationViewProps> = (props) => {
     });
     layerRef.current = new Konva.Layer();
     stageRef.current.add(layerRef.current);
-    drawText({
-      text: "Hello, World!",
-      fontSize: 20,
-      fontFamily: "Calibri",
-      fill: "green",
-    });
   }, []);
 
   useEffect(() => {
