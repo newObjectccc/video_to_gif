@@ -21,9 +21,10 @@ interface ImgMenuProps {
   onRemove?: () => void;
   children?: React.ReactNode;
   className?: string;
+  disabled?: boolean;
 }
 export const ImgMenu: React.FC<ImgMenuProps> = (props) => {
-  const { onPreview, onEdit, onRemove, children, className } = props;
+  const { onPreview, onEdit, onRemove, children, className, disabled } = props;
   const [checkedState, setCheckedState] = React.useState<any>({
     checkOne: true,
     checkTwo: false,
@@ -53,10 +54,6 @@ export const ImgMenu: React.FC<ImgMenuProps> = (props) => {
         break;
       case "edit":
         onEdit?.();
-        toast({
-          title: "该功能还在开发中",
-          description: "去给作者点个star或者留下issue，催促新功能~",
-        });
         break;
       case "remove":
         onRemove?.();
@@ -72,7 +69,9 @@ export const ImgMenu: React.FC<ImgMenuProps> = (props) => {
 
   return (
     <ContextMenu>
-      <ContextMenuTrigger className={className}>{children}</ContextMenuTrigger>
+      <ContextMenuTrigger disabled={disabled} className={className}>
+        {children}
+      </ContextMenuTrigger>
       <ContextMenuContent className="w-64">
         <ContextMenuItem
           inset

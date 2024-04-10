@@ -8,10 +8,33 @@ export function getCurTargetElemIdx(event: any) {
   return index;
 }
 
+export function generateImgDataByImg(
+  img: HTMLImageElement,
+  rect: { width?: number; height?: number }
+) {
+  const { width, height } = rect;
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
+  canvas.width = width ?? img.width;
+  canvas.height = height ?? img.height;
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  return ctx.getImageData(0, 0, canvas.width, canvas.height);
+}
+
+export function exportImgByUrl(url: string) {
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "output.gif";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
 export async function generateGifByImgData(
   imgData: ImageData | ImageData[],
   delay: number = 100
-) {
+): Promise<string> {
   return new Promise((resolve) => {
     try {
       const imgDataArr = Array.isArray(imgData) ? imgData : [imgData];
@@ -71,4 +94,28 @@ export function fillNoticeTxtToCanvas(
   ctx.textBaseline = textBaseline;
   ctx.textAlign = textAlign;
   ctx.fillText(text, width / 2, height / 2);
+}
+
+export function imgDataToUrl(data: ImageData) {
+  if (!data) return;
+  const canvas = document.createElement("canvas");
+  canvas.width = data.width;
+  canvas.height = data.height;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return "";
+  ctx.putImageData(data, 0, 0);
+  return canvas.toDataURL();
+}
+
+export function imgToCanvasImageSource(
+  img: CanvasImageSource & { width: number; height: number }
+) {
+  if (!img.width || !img.height) return;
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
+  canvas.width = img.width;
+  canvas.height = img.height;
+  ctx.drawImage(img, 0, 0);
+  return ctx.getImageData(0, 0, canvas.width, canvas.height);
 }

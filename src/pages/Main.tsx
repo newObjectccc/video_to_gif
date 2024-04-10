@@ -2,37 +2,31 @@ import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ToastAction } from "@/components/ui/toast";
 import { toast } from "@/components/ui/use-toast";
-import { TransformStateContext } from "@src/App";
-import { fillNoticeTxtToCanvas, getCurTargetElemIdx } from "@src/common/tools";
+import { exportImgByUrl, fillNoticeTxtToCanvas } from "@src/common/tools";
 import ClipRect from "@src/components/ClipRect";
 import { ContactDrawer } from "@src/components/ContactDrawer";
 import ExportGift from "@src/components/ExportGif";
-import { ImgMenu } from "@src/components/ImgMenu";
+import { FramesStack } from "@src/components/FramesStack";
 import PreviewGif from "@src/components/PreviewGif";
 import RenderFramesLine from "@src/components/RenderFramesLine";
 import Upload from "@src/components/Upload";
+import { TransformStateContext } from "@src/contexts/TransformProvider";
 import { useClipRect } from "@src/hooks/useClipRect";
-import mediumZoom from "medium-zoom";
 import { useTheme } from "next-themes";
-import React, { MouseEventHandler, useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 
 interface MainProps {}
 const Main: React.FC<MainProps> = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const cacheFrames = useRef<any[]>([]);
-  const framesStackElemRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
   const [isRendering, setIsRendering] = React.useState<boolean>(false);
-  const [totalFrames, setTotalFrames] = React.useState<number>(0);
-  const [curImageIdx, setCurImageIdx] = React.useState<number>(0);
+  const framesStackRef = useRef<any>(null);
   const [previewRect, setPreviewRect] = React.useState<any>({});
-  const zoomRef = useRef<any>(null);
   const { theme } = useTheme();
+  const [state, dispatch] = React.useContext(TransformStateContext);
   const { addClipRect, removeClipRect, clipRect, isShowClip } =
     useClipRect("#videoWrapper");
-
-  const [state, dispatch] = React.useContext(TransformStateContext);
 
   const onUploadHandler = (file: File) => {
     if (!videoRef.current!.canPlayType(file.type)) {
@@ -49,90 +43,15 @@ const Main: React.FC<MainProps> = () => {
 
   const onExportHandler = () => {
     if (!state.gifStat.url) return;
-    const link = document.createElement("a");
-    link.href = state.gifStat.url;
-    link.download = "output.gif";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
-  const onMenuShow = (e: MouseEventHandler<HTMLDivElement>) => {
-    const idx = getCurTargetElemIdx(e);
-    setCurImageIdx(idx);
-  };
-
-  const onImgRemove = () => {
-    if (!cacheFrames.current.length) return;
-    cacheFrames.current.splice(curImageIdx, 1);
-    framesStackElemRef.current?.removeChild(
-      framesStackElemRef.current?.children[curImageIdx]
-    );
-    setTotalFrames((prev) => prev - 1);
-  };
-
-  const onImgEdit = () => {};
-
-  const onImgPreview = () => {
-    const zoom = mediumZoom(
-      framesStackElemRef.current!.querySelectorAll("img")[curImageIdx],
-      { background: theme === "light" ? "#F8FAFC" : "#020817" }
-    );
-    zoom.open();
+    exportImgByUrl(state.gifStat.url);
   };
 
   const onStackRenderHandler = () => {
-    const framesStackElem = framesStackElemRef.current;
-    if (!framesStackElem) return;
-    if (framesStackElem?.childElementCount) framesStackElem.innerHTML = "";
-    if (cacheFrames.current.length === 0)
-      return toast({
-        title: "没有缓存帧",
-        description: "请检查左侧步骤是否有错误~",
-        action: <ToastAction altText="去上传">Undo</ToastAction>,
-      });
-    cacheFrames.current.forEach((imageData, idx) => {
-      setTimeout(() => {
-        const { width, height } = imageData;
-        const canvas = document.createElement("canvas");
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext("2d");
-        if (!ctx) return;
-        ctx.putImageData(imageData, 0, 0);
-        const img = document.createElement("img");
-        img.width = 120;
-        img.height = 60;
-        img.style.zIndex = "2"; // 因为 clipRect 的 z-index 是 1
-        img.decoding = "async";
-        img.loading = "lazy";
-        img.src = canvas.toDataURL();
-        framesStackElem.appendChild(img);
-        if (progressRef.current) {
-          progressRef.current.style.width = `${
-            ((idx + 1) / cacheFrames.current.length) * 100
-          }%`;
-          if (idx + 1 === cacheFrames.current.length) {
-            progressRef.current.style.visibility = "hidden";
-            setTotalFrames(cacheFrames.current.length);
-            zoomRef.current = mediumZoom(
-              framesStackElem.querySelectorAll("img"),
-              {
-                background:
-                  theme === "light"
-                    ? "rgba(248, 250, 252, 0.85)"
-                    : "rgba(2, 8, 23, 0.85)",
-              }
-            );
-          }
-          if (idx === 0) progressRef.current.style.visibility = "visible";
-        }
-      });
-    });
+    framesStackRef.current?.renderStack();
   };
 
   const previewGif = () => {
-    if (!cacheFrames.current.length) {
+    if (!state.cacheFrames.length) {
       toast({
         title: "没有缓存帧",
         description: "请检查左侧步骤是否有错误~",
@@ -145,7 +64,7 @@ const Main: React.FC<MainProps> = () => {
       new URL("../works/generateGif.ts", import.meta.url)
     );
     gifWorker.postMessage({
-      imgData: cacheFrames.current,
+      imgData: state.cacheFrames,
       delay: state.framesOptions.framesDelay!,
     });
     gifWorker.onmessage = (e) => {
@@ -167,10 +86,8 @@ const Main: React.FC<MainProps> = () => {
 
   const resetWorkspace = (ctx: CanvasRenderingContext2D) => {
     ctx.clearRect(0, 0, state.canvasRect.width!, state.canvasRect.height!);
-    cacheFrames.current = [];
-    setTotalFrames(0);
+    dispatch({ type: "cacheFrames", payload: [] } as any);
     setIsRendering(false);
-    framesStackElemRef.current!.innerHTML = "";
     dispatch({ type: "gifStat", payload: { url: "" } } as any);
   };
 
@@ -188,12 +105,6 @@ const Main: React.FC<MainProps> = () => {
         fillStyle: theme === "dark" ? "#F8FAFC" : "#020817",
       });
     }
-    zoomRef.current?.update({
-      background:
-        theme === "light"
-          ? "rgba(248, 250, 252, 0.85)"
-          : "rgba(2, 8, 23, 0.85)",
-    });
   }, [theme]);
 
   useEffect(() => {
@@ -223,8 +134,12 @@ const Main: React.FC<MainProps> = () => {
         type: "videoRect",
         payload: { width: video.videoWidth, height: video.videoHeight },
       } as any);
+      const cacheImgDataArr: ImageData[] = [];
       const loop = async () => {
-        if (video.paused || video.ended) return;
+        if (video.paused || video.ended) {
+          dispatch({ type: "cacheFrames", payload: cacheImgDataArr } as any);
+          return;
+        }
         const videoWidth = video.videoWidth; // 视频的实际宽度
         const videoHeight = video.videoHeight; // 视频的实际高度
 
@@ -258,7 +173,7 @@ const Main: React.FC<MainProps> = () => {
           state.canvasRect.width!,
           state.canvasRect.height!
         );
-        cacheFrames.current.push(imageData);
+        cacheImgDataArr.push(imageData);
         setTimeout(loop, 1000 / state.framesOptions.framesPicker!);
       };
       loop();
@@ -315,7 +230,7 @@ const Main: React.FC<MainProps> = () => {
   };
 
   return (
-    <div className="p-4 w-full">
+    <div className="py-1 px-4 w-full">
       <div className="flex gap-3 items-center">
         <ClipRect onClip={addClipRect} onReset={removeClipRect}></ClipRect>
         <Upload onUpload={onUploadHandler}></Upload>
@@ -363,27 +278,7 @@ const Main: React.FC<MainProps> = () => {
         ref={progressRef}
         className="h-1 my-4 flex items-center bg-slate-400 w-[1px] invisible"
       ></div>
-      <ImgMenu
-        onRemove={onImgRemove}
-        onEdit={onImgEdit}
-        onPreview={onImgPreview}
-        className="flex flex-nowrap overflow-x-auto h-[130px] w-full mb-2 border border-dashed p-2"
-      >
-        <div
-          ref={framesStackElemRef}
-          className="flex flex-nowrap h-full gap-2 w-full"
-          onContextMenu={onMenuShow as any}
-        >
-          <div className="w-full flex justify-center items-center h-full">
-            帧栈渲染区（如无其他细调操作，无需渲染帧栈，关键帧上右键单击弹出操作菜单）
-          </div>
-        </div>
-      </ImgMenu>
-      {totalFrames ? (
-        <div className="text-sm">
-          共{totalFrames}张关键帧（关键帧上右键单击弹出操作菜单）
-        </div>
-      ) : null}
+      <FramesStack ref={framesStackRef} />
     </div>
   );
 };
