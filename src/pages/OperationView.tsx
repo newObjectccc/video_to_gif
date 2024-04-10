@@ -1,6 +1,14 @@
 import { Button } from "@/components/ui/button";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuShortcut,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
 import { toast } from "@/components/ui/use-toast";
 import {
+  exportImgByUrl,
   generateGifByImgData,
   generateImgDataByImg,
   getCurTargetElemIdx,
@@ -11,27 +19,43 @@ import { ImgEditCard } from "@src/components/ImgEditCard";
 import PreviewGif from "@src/components/PreviewGif";
 import RenderFramesLine from "@src/components/RenderFramesLine";
 import { TransformStateContext } from "@src/contexts/TransformProvider";
+import { DialogComponent } from "@src/hooks/useDialog";
 import Konva from "konva";
 import { ReplaceAll } from "lucide-react";
 import React, { useEffect } from "react";
 
 const defaultImgEditState = {
-  brightness: 50,
+  hue: 0,
+  saturation: 0,
+  luminance: 0,
+  noise: 0,
+  pixelate: 1,
+  blurRadius: 0,
   grayscale: false,
 };
 
+type FilterType =
+  | "hue"
+  | "saturation"
+  | "luminance"
+  | "grayscale"
+  | "noise"
+  | "blurRadius"
+  | "pixelate";
 type ImgState = { cacheImg: Konva.Image | null } & Pick<
   typeof defaultImgEditState,
-  "brightness" | "grayscale"
+  FilterType
 >;
 
 interface OperationViewProps {}
-export const OperationView: React.FC<OperationViewProps> = (props) => {
+export const OperationView: React.FC<OperationViewProps> = () => {
   const [currentIdx, setCurrentIdx] = React.useState<number>(0);
+  const [imgEditState, setImgEditState] = React.useState(defaultImgEditState);
+  const [open, setOpen] = React.useState<boolean>(false);
+  const [gifUrl, setGifUrl] = React.useState<string>("");
   const [transformState, transformStateDispatch] = React.useContext(
     TransformStateContext
   );
-  const [imgEditState, setImgEditState] = React.useState(defaultImgEditState);
   const containerRef = React.useRef<HTMLDivElement>(null);
   const stageRef = React.useRef<Konva.Stage | null>(null);
   const layerRef = React.useRef<Konva.Layer | null>(null);
@@ -49,22 +73,22 @@ export const OperationView: React.FC<OperationViewProps> = (props) => {
     if (editedImage) {
       mergedState = {
         ...mergedState,
-        brightness: editedImage.brightness,
+        hue: editedImage.hue,
+        saturation: editedImage.saturation,
+        luminance: editedImage.luminance,
         grayscale: editedImage.grayscale,
+        noise: editedImage.noise,
+        pixelate: editedImage.pixelate,
+        blurRadius: editedImage.blurRadius,
       };
     }
     setImgEditState(mergedState);
   };
 
-  const onChangeHandler = (field: string, value: any) => {
+  const onChangeHandler = (field: FilterType, value: any) => {
     setImgEditState((state) => ({ ...state, [field]: value }));
     const img = modifiedFramesStack.current[currentIdx];
-    if (field === "grayscale") {
-      img.grayscale = value;
-    }
-    if (field === "brightness") {
-      img.brightness = value;
-    }
+    (img as any)[field] = value;
   };
 
   const drawText = (textInfo: {
@@ -94,8 +118,13 @@ export const OperationView: React.FC<OperationViewProps> = (props) => {
     let img = modifiedFramesStack.current[currentIdx];
     if (img) return;
     img = {
-      brightness: imgEditState.brightness,
+      hue: imgEditState.hue,
+      saturation: imgEditState.saturation,
+      luminance: imgEditState.luminance,
       grayscale: imgEditState.grayscale,
+      noise: imgEditState.noise,
+      pixelate: imgEditState.pixelate,
+      blurRadius: imgEditState.blurRadius,
       cacheImg: null,
     };
     const imageObj = new Image();
@@ -114,15 +143,32 @@ export const OperationView: React.FC<OperationViewProps> = (props) => {
   };
 
   const setEditStateToImg = (imgState: ImgState) => {
-    let { cacheImg, brightness, grayscale } = imgState;
-    const filers = [Konva.Filters.Brighten];
+    let {
+      cacheImg,
+      hue,
+      saturation,
+      luminance,
+      grayscale,
+      noise,
+      pixelate,
+      blurRadius,
+    } = imgState;
+    const filers = [
+      Konva.Filters.HSL,
+      Konva.Filters.Noise,
+      Konva.Filters.Pixelate,
+      Konva.Filters.Blur,
+    ];
     if (grayscale) filers.push(Konva.Filters.Grayscale);
     cacheImg?.cache();
     cacheImg?.filters(filers);
-    brightness = brightness > 50 ? brightness - 50 : -1 * (50 - brightness);
-    cacheImg?.brightness((brightness * 2) / 100);
+    cacheImg?.hue(hue);
+    cacheImg?.saturation(saturation);
+    cacheImg?.luminance(luminance);
+    cacheImg?.noise(noise);
+    cacheImg?.pixelSize(pixelate);
+    cacheImg?.blurRadius(blurRadius);
     cacheImg?.moveToTop();
-    // 生成img通过stage或者layer
   };
 
   const renderModifiedFrame = async () => {
@@ -146,7 +192,7 @@ export const OperationView: React.FC<OperationViewProps> = (props) => {
     if (!containerRef.current) return;
     let width = transformState.cacheFrames[currentIdx]?.width;
     let height = transformState.cacheFrames[currentIdx]?.height;
-    const scaleRatio = (window.innerWidth - 480) / width;
+    const scaleRatio = (window.innerWidth - 960) / width;
     width = width * scaleRatio;
     height = height * scaleRatio;
     stageRef.current = new Konva.Stage({
@@ -165,16 +211,30 @@ export const OperationView: React.FC<OperationViewProps> = (props) => {
 
   const previewGif = async () => {
     const imgDataList = renderedFrames.current.map(
-      (img) => generateImgDataByImg(img)!
+      (img) => generateImgDataByImg(img, transformState.canvasRect)!
     );
     const url = await generateGifByImgData(imgDataList);
-    console.log("🚀 ~ previewGif ~ url:", url);
+    setGifUrl(url);
+    setOpen(true);
   };
   const applyToAll = () => {
     toast({
       title: "该功能还在开发中",
       description: "去给作者点个star或者留下issue，催促新功能~",
     });
+  };
+
+  const onCancel = () => {
+    setOpen(false);
+  };
+  const onSave = () => {
+    exportImgByUrl(gifUrl);
+    setOpen(false);
+  };
+
+  const onModifiedFrameClick = (evt: any) => {
+    const idx = getCurTargetElemIdx(evt);
+    console.log("🚀 ~ onModifiedFrameClick ~ idx:", idx);
   };
 
   return (
@@ -195,10 +255,21 @@ export const OperationView: React.FC<OperationViewProps> = (props) => {
         onFrameClick={frameClick}
       ></FramesStack>
 
-      <div
-        className="flex flex-nowrap h-full gap-2 w-full p-2 border border-dashed mb-4 overflow-x-auto"
-        ref={modifiedFramesStackElemRef}
-      ></div>
+      <ContextMenu>
+        <ContextMenuTrigger className="w-full">
+          <div
+            className="flex flex-nowrap h-full gap-2 w-full p-2 border border-dashed mb-4 overflow-x-auto"
+            ref={modifiedFramesStackElemRef}
+            onClick={onModifiedFrameClick}
+          ></div>
+        </ContextMenuTrigger>
+        <ContextMenuContent className="w-64">
+          <ContextMenuItem inset onSelect={onModifiedFrameClick}>
+            删除
+            <ContextMenuShortcut>⌘R</ContextMenuShortcut>
+          </ContextMenuItem>
+        </ContextMenuContent>
+      </ContextMenu>
 
       <div className="flex flex-nowrap items-center w-full">
         <ImgEditCard imgEditState={imgEditState} onChange={onChangeHandler} />
@@ -207,6 +278,17 @@ export const OperationView: React.FC<OperationViewProps> = (props) => {
           ref={containerRef}
         ></div>
       </div>
+
+      <DialogComponent
+        title="预览GIF"
+        description="预览生成的GIF图片，点击保存按钮保存到本地。"
+        open={open}
+        onCancel={onCancel}
+        onSave={onSave}
+        onOpenChange={setOpen}
+      >
+        <img src={gifUrl} alt="gif" />
+      </DialogComponent>
     </div>
   );
 };

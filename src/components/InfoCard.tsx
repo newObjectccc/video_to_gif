@@ -60,7 +60,7 @@ export function InfoCard({ className, ...props }: CardProps) {
       <CardHeader>
         <CardTitle className="mb-3">定制面板</CardTitle>
         <CardDescription>
-          视频播放时同步采样，结束或暂停都会停止采样，请直接拉动进度条到你想要的开始点或直接从头开始
+          视频播放时同步采样，结束或暂停都会停止采样，请直接拉动进度条到你想要的开始点或直接从头开始，渲染帧栈后右键单击可编辑，删除等操作。
         </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-2">

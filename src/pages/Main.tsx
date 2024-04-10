@@ -2,7 +2,7 @@ import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ToastAction } from "@/components/ui/toast";
 import { toast } from "@/components/ui/use-toast";
-import { fillNoticeTxtToCanvas } from "@src/common/tools";
+import { exportImgByUrl, fillNoticeTxtToCanvas } from "@src/common/tools";
 import ClipRect from "@src/components/ClipRect";
 import { ContactDrawer } from "@src/components/ContactDrawer";
 import ExportGift from "@src/components/ExportGif";
@@ -43,12 +43,7 @@ const Main: React.FC<MainProps> = () => {
 
   const onExportHandler = () => {
     if (!state.gifStat.url) return;
-    const link = document.createElement("a");
-    link.href = state.gifStat.url;
-    link.download = "output.gif";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    exportImgByUrl(state.gifStat.url);
   };
 
   const onStackRenderHandler = () => {
