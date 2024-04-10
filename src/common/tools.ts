@@ -8,6 +8,16 @@ export function getCurTargetElemIdx(event: any) {
   return index;
 }
 
+export function generateImgDataByImg(img: HTMLImageElement) {
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
+  canvas.width = img.width;
+  canvas.height = img.height;
+  ctx.drawImage(img, 0, 0);
+  return ctx.getImageData(0, 0, canvas.width, canvas.height);
+}
+
 export async function generateGifByImgData(
   imgData: ImageData | ImageData[],
   delay: number = 100
@@ -82,4 +92,17 @@ export function imgDataToUrl(data: ImageData) {
   if (!ctx) return "";
   ctx.putImageData(data, 0, 0);
   return canvas.toDataURL();
+}
+
+export function imgToCanvasImageSource(
+  img: CanvasImageSource & { width: number; height: number }
+) {
+  if (!img.width || !img.height) return;
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
+  canvas.width = img.width;
+  canvas.height = img.height;
+  ctx.drawImage(img, 0, 0);
+  return ctx.getImageData(0, 0, canvas.width, canvas.height);
 }
