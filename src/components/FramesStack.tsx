@@ -160,15 +160,17 @@ export const FramesStack: React.FC<React.PropsWithRef<FramesStackProps>> =
             onClick={onFrameClick}
           ></div>
         </ImgMenu>
-        {cacheFrames.length ? (
+        {cacheFrames.length && !preventMenu ? (
           <div className="text-sm">
             共{cacheFrames.length}张关键帧（关键帧上右键单击弹出操作菜单）
           </div>
         ) : null}
-        <div
-          ref={progressRef}
-          className="h-1 my-4 flex items-center bg-slate-400 w-[1px] invisible"
-        ></div>
+        {!preventMenu && (
+          <div
+            ref={progressRef}
+            className="h-1 my-4 flex items-center bg-slate-400 w-[1px] invisible"
+          ></div>
+        )}
       </>
     );
   });
