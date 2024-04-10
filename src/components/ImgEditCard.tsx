@@ -1,4 +1,4 @@
-import { Frame, PencilRuler, Ruler, Scan } from "lucide-react";
+import { Frame, PencilRuler, Ruler } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -16,8 +16,7 @@ import React from "react";
 interface CardProps {
   className?: string;
   imgEditState: {
-    isApplyAll: boolean;
-    brightness: number[];
+    brightness: number;
     grayscale: boolean;
   };
   onChange: (field: string, value: any) => void;
@@ -36,22 +35,6 @@ export const ImgEditCard: React.FC<CardProps> = (props) => {
       </CardHeader>
       <CardContent className="grid gap-2">
         <div className="flex items-center space-x-4 rounded-md border px-2 h-10">
-          <Scan className="size-4" />
-          <div className="">
-            <p className="text-sm font-medium leading-none">应用所有</p>
-          </div>
-          <div className="flex items-center flex-1 justify-end">
-            <span className="text-sm font-medium leading-none mr-1">
-              {imgEditState.isApplyAll ? "是" : "否"}
-            </span>
-            <Switch
-              disabled
-              checked={imgEditState.isApplyAll}
-              onCheckedChange={(val) => onChange("isApplyAll", val)}
-            ></Switch>
-          </div>
-        </div>
-        <div className="flex items-center space-x-4 rounded-md border px-2 h-10">
           <PencilRuler className="size-4" />
           <p className="text-sm font-medium leading-none">是否开启灰度</p>
           <div className="flex items-center flex-1 justify-end">
@@ -69,14 +52,14 @@ export const ImgEditCard: React.FC<CardProps> = (props) => {
           <p className="text-sm font-medium leading-none">亮度调节</p>
           <div className="flex items-center flex-1 justify-end">
             <span className="text-sm font-medium leading-none mr-1">
-              {imgEditState.brightness[0]}%
+              {imgEditState.brightness}%
             </span>
             <Slider
-              value={imgEditState.brightness}
+              value={[imgEditState.brightness]}
               max={100}
               min={0}
               step={1}
-              onValueChange={(val) => onChange("brightness", val)}
+              onValueChange={(val) => onChange("brightness", val[0])}
               className={cn("w-[60%]", "ml-2")}
             />
           </div>
