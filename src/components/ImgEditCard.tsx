@@ -30,7 +30,7 @@ export const ImgEditCard: React.FC<CardProps> = (props) => {
       <CardHeader>
         <CardTitle className="mb-3">编辑合成面板</CardTitle>
         <CardDescription>
-          通过配置蒙版来合成最终每一帧或指定帧的图片
+          通过配置蒙版来合成最终每一帧或指定帧的图片，修改后不会立即生效，点击渲染编辑帧按钮生效。
         </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-2">
