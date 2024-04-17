@@ -42,7 +42,7 @@ export const ImgEditCard: React.FC<CardProps> = (props) => {
       <CardHeader>
         <CardTitle className="mb-3">编辑合成面板</CardTitle>
         <CardDescription>
-          您可以在这里编辑每一帧或指定帧，修改参数后点击渲染编辑帧按钮渲染帧到gif栈中，右键单击可以删除渲染帧，编辑完，先预览，才能导出。
+          您可以在这里编辑每一帧或指定帧，修改参数后点击渲染编辑帧按钮渲染帧到gif栈中，右键单击可以删除渲染帧，编辑完，先预览，才能导出。（gif由所有编辑帧组成）
         </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-2">

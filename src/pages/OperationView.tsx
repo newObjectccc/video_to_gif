@@ -214,6 +214,11 @@ export const OperationView: React.FC<OperationViewProps> = () => {
       (img) => generateImgDataByImg(img, transformState.canvasRect)!
     );
     const url = await generateGifByImgData(imgDataList);
+    if (!url)
+      return toast({
+        title: "生成GIF失败",
+        description: "请点击渲染编辑帧按钮，生成对应帧再重试！",
+      });
     setGifUrl(url);
     setOpen(true);
   };
@@ -234,7 +239,6 @@ export const OperationView: React.FC<OperationViewProps> = () => {
 
   const onModifiedFrameClick = (evt: any) => {
     const idx = getCurTargetElemIdx(evt);
-    console.log("🚀 ~ onModifiedFrameClick ~ idx:", idx);
   };
 
   return (
